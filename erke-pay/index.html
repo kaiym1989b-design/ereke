@@ -148,6 +148,14 @@ textarea.inp{height:auto;min-height:90px;padding:12px 14px;resize:vertical}
  .auth .bd{flex:1;justify-content:center;max-width:none;align-self:stretch;padding:64px 9%;background:var(--card)}
  .auth .bd>*{max-width:440px;width:100%;margin:0 auto}
 }
+.auth .art{width:100%;border-radius:18px;display:block;aspect-ratio:3/2;object-fit:cover;box-shadow:0 14px 34px rgba(0,0,0,.28)}
+@media (min-width:900px){.auth .art{border-radius:24px;max-width:640px}}
+.dwel{display:none}
+@media (min-width:900px){.dsale{display:none!important}.dwel{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);border-radius:24px;overflow:hidden;background:var(--b7);color:#fff;min-height:250px}
+ .dwel .t{padding:28px 30px;display:flex;flex-direction:column;gap:8px;justify-content:center}.dwel .t .v{font-size:40px;font-weight:800}
+ .dwel img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;mask-image:linear-gradient(90deg,transparent 0,#000 18%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%)}}
+.scover{border-radius:20px;overflow:hidden;position:relative}.scover img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;object-position:center 30%}
+.scover .cap{position:absolute;left:0;right:0;bottom:0;padding:40px 16px 14px;background:linear-gradient(180deg,transparent,rgba(14,59,23,.92));color:#fff;display:flex;align-items:center;gap:12px}
 /* toast & notif */
 #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -277,7 +285,7 @@ function page(active,title,body,o={}){
 
 /* ---------- auth screens ---------- */
 let authMode='login',authErr='',authInfo='';
-routes.login=()=>`<div class="auth"><div class="hd"><div class="logo"><img class="m" src="logo.png" alt="EREKE" style="width:72px;height:72px"><div><b style="font-size:24px">ERKE</b><small>PAY</small></div></div><div><h1>Сатушы кабинеті</h1><p>ERKE MD-ден түскен заказдарды қабылдап, дүкеніңізді бір жерден басқарыңыз.</p></div></div>
+routes.login=()=>`<div class="auth"><div class="hd"><div class="logo"><img class="m" src="logo.png" alt="EREKE" style="width:72px;height:72px"><div><b style="font-size:24px">ERKE</b><small>PAY</small></div></div><div><h1>Сатушы кабинеті</h1><p>ERKE MD-ден түскен заказдарды қабылдап, дүкеніңізді бір жерден басқарыңыз.</p></div><img class="art" src="seller.webp" srcset="seller-sm.webp 960w, seller.webp 1536w" sizes="(min-width:900px) 50vw, 100vw" alt="EREKE MD дүкенінің сатушысы кассада"></div>
 <form class="bd" onsubmit="event.preventDefault();doAuth()">
 <h2 style="font-size:22px">${authMode==='login'?'Кіру':'Тіркелу'}</h2>
 ${authErr?`<div class="err">${esc(authErr)}</div>`:''}${authInfo?`<div class="note">${authInfo}</div>`:''}
@@ -313,7 +321,8 @@ routes.home=()=>{const s=todayStats();const news=A.orders.filter(o=>o.status==='
   <div><div style="font-size:24px;font-weight:800">Сәлем, ${esc((A.profile?.full_name||'').split(' ')[0]||'сатушы')}!</div><div class="sm" style="opacity:.78;margin-top:4px">${esc(day)}</div></div>
   <span class="chipw">${ic(I.store,18)} ${esc(A.store.name)} · ${esc(ROLES[A.role])}</span>
   <div class="sale"><div class="row"><span class="sp sm mut" style="font-weight:500">Бүгінгі сатылым</span><span id="live" class="live ${A.live?'':'off'}">${A.live?'Тікелей':'Қосылуда...'}</span></div><div class="v">${fmt(s.sales)}</div><div class="row xs mut" style="gap:16px">${ic(I.box,15)} ${s.n} заказ <span>${ic(I.chart,15)} Орташа чек ${fmt(s.avg)}</span></div></div></div>`;
-  const body=`<div class="dsale"><span style="opacity:.8">Бүгінгі сатылым</span><span class="v">${fmt(s.sales)}</span><span style="color:var(--gold);font-weight:600;font-size:13px">${s.n} заказ · орташа чек ${fmt(s.avg)}</span></div>
+  const body=`<div class="dwel"><div class="t"><span style="opacity:.85">Сәлем, ${esc((A.profile?.full_name||'').split(' ')[0]||'сатушы')}! · ${esc(day)}</span><span style="opacity:.8;margin-top:10px">Бүгінгі сатылым</span><span class="v">${fmt(s.sales)}</span><span style="color:var(--gold);font-weight:600;font-size:14px">${s.n} заказ · орташа чек ${fmt(s.avg)}</span></div><img src="seller.webp" alt="EREKE MD сатушысы"></div>
+  <div class="dsale"><span style="opacity:.8">Бүгінгі сатылым</span><span class="v">${fmt(s.sales)}</span><span style="color:var(--gold);font-weight:600;font-size:13px">${s.n} заказ · орташа чек ${fmt(s.avg)}</span></div>
   <div class="row"><h3 class="sp" style="font-size:18px">Бүгінгі статистика</h3>${can.reports()?`<button class="link sm" onclick="go('#/report')">Есепті ашу</button>`:''}</div>
   <div class="stats">${FLOW.concat('CANCELLED').map(k=>`<button class="stat" onclick="A.filter='${k}';A.period='today';go('#/orders')"><span class="ic B-${k}" style="padding:0">${ic(I[ST[k][1]],16,2.2)}</span><b>${s.c[k]}</b><span>${ST[k][0]}</span></button>`).join('')}</div>
   <div class="row" style="margin-top:4px"><h3 class="sp" style="font-size:18px">Жаңа заказдар</h3>${news.length?`<span class="badge B-NEW">${news.length} жаңа</span>`:''}</div>
@@ -400,7 +409,8 @@ async function reallyDel(id){const {error}=await SB.from('products').delete().eq
 /* ---------- store hub ---------- */
 routes.store=()=>{const s=todayStats();const off=A.products.filter(p=>!p.is_available).length;const open=isOpen();
   const tiles=[[I.box,'Заказдар',(s.c.NEW?s.c.NEW+' жаңа':'Жаңа заказ жоқ'),'#/orders',1],[I.tag,'Тауарлар',A.products.length+' тауар','#/products',1],[I.warehouse,'Қойма',off?off+' тауар қолжетімсіз':'Барлығы сатылымда','#/products',1],[I.info,'Дүкен туралы','Атауы, БСН, байланыс','#/settings',can.settings()],[I.clock,'Жұмыс уақыты',(A.store.open_time||'').slice(0,5)+'–'+(A.store.close_time||'').slice(0,5),'#/settings',can.settings()],[I.users,'Қызметкерлер','Рөлдер мен шақыру','#/staff',1],[I.chart,'Есеп','Бүгін '+fmt(s.sales),'#/report',can.reports()],[I.gear,'Баптаулар','Хабарлама, дыбыс','#/profile',1]];
-  const body=`<div class="card row" style="background:var(--b7);color:#fff;padding:16px"><span class="logo"><img class="m" src="logo.png" alt="EREKE" style="width:56px;height:56px;font-size:28px;border-radius:16px"></span><div class="sp"><b style="font-size:18px">${esc(A.store.name)}</b><div class="sm" style="opacity:.78">${esc([A.store.city,'Табиғи өнімдер'].filter(Boolean).join(' · '))}</div><span class="badge" style="margin-top:6px;background:${open?'var(--gold)':'rgba(255,255,255,.2)'};color:${open?'var(--b9)':'#fff'}">${open?'Ашық':'Жабық'}</span></div></div>
+  const body=`<div class="scover"><img src="seller-sm.webp" alt="EREKE MD дүкені"><div class="cap"><b style="font-size:16px">EREKE MD — табиғи өнімдер</b></div></div>
+  <div class="card row" style="background:var(--b7);color:#fff;padding:16px"><span class="logo"><img class="m" src="logo.png" alt="EREKE" style="width:56px;height:56px;font-size:28px;border-radius:16px"></span><div class="sp"><b style="font-size:18px">${esc(A.store.name)}</b><div class="sm" style="opacity:.78">${esc([A.store.city,'Табиғи өнімдер'].filter(Boolean).join(' · '))}</div><span class="badge" style="margin-top:6px;background:${open?'var(--gold)':'rgba(255,255,255,.2)'};color:${open?'var(--b9)':'#fff'}">${open?'Ашық':'Жабық'}</span></div></div>
   <div class="tiles">${tiles.filter(t=>t[4]).map(([p,l,s,h])=>`<button class="tile" onclick="go('${h}')"><span class="ic">${ic(p,20)}</span><b>${l}</b><span>${esc(s)}</span></button>`).join('')}</div>`;
   return page('store','Магазин',body)};
 function isOpen(){const n=new Date();const m=n.getHours()*60+n.getMinutes();const t=s=>{const [h,mi]=(s||'00:00').split(':').map(Number);return h*60+mi};return A.store.is_active&&m>=t(A.store.open_time)&&m<t(A.store.close_time)}
