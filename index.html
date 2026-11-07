@@ -166,6 +166,24 @@ button{border:0;background:none;cursor:pointer}
 .tline{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:15px;width:100%;text-align:left}
 .tline.on .radio{border-color:var(--g)}
 .tline.on .radio::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--g)}
+.inp input{min-width:0;width:100%}a.btn{text-decoration:none}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--mut);margin:16px 4px 8px}
+.fl{margin-top:10px}.fl:first-child{margin-top:0}.fl label{display:block;font-size:12.5px;color:var(--mut);margin:0 0 5px 2px}
+.selb{width:100%;justify-content:space-between;text-align:left;font-size:15px}.selb .ph{color:#9aa49d}.selb.dis{opacity:.55}.selb svg{color:var(--mut)}
+.hint{font-size:12.5px;color:var(--mut);line-height:1.45;margin-top:10px}.hint a{color:var(--g);font-weight:600}
+.note{background:var(--gl);color:var(--g2);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45;margin-top:4px}
+.opt.tx{cursor:pointer;background:var(--card)}.opt.tx.on{background:var(--gl)}
+.badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;color:#fff;font-weight:800;font-size:15px}
+.kz{font-style:normal;font-size:10px;background:#00AFCA;color:#fff;border-radius:5px;padding:1px 5px;margin-left:4px;vertical-align:2px}
+.open{padding:8px 14px;border-radius:10px;background:var(--g);color:#fff;font-weight:700;font-size:13px;flex:none}
+.addr{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+.addr .oi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--gl);color:var(--g);flex:none}
+.addr .t{flex:1;min-width:0}.addr .t b{display:block;font-size:14.5px}.addr .t small{display:block;color:var(--mut);font-size:12.5px;margin-top:2px}.addr>svg{color:var(--mut);flex:none}
+.bank{margin-top:6px;border-radius:18px;padding:18px;height:190px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;background:linear-gradient(135deg,#1B5E20,#43A047);box-shadow:0 10px 24px rgba(27,94,32,.3);position:relative}
+.bank .chip-c{width:40px;height:30px;border-radius:6px;background:linear-gradient(135deg,#f6d77a,#c9a227)}
+.bank .no{font-size:21px;letter-spacing:.08em;font-weight:600;font-variant-numeric:tabular-nums}
+.bank .bf{display:flex;justify-content:space-between;font-size:13px;opacity:.9;letter-spacing:.05em}
+.bank .vm{position:absolute;top:18px;right:18px;font-size:13px;opacity:.9}
 /* done */
 .done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
 .done .ok{width:110px;height:110px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(46,125,50,.35)}
@@ -212,7 +230,8 @@ const img=p=>`img/p/${p.id}.webp`;
 /* state */
 const LS={get(k,d){try{return JSON.parse(localStorage.getItem('ereke-'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('ereke-'+k,JSON.stringify(v))}catch(e){}}};
 let S={cart:LS.get('cart',{}),fav:LS.get('fav',[]),orders:LS.get('orders',[]),seen:LS.get('seen',[]),
-  ck:{addr:'',del:'post',time:'today',pay:'kaspi'}};
+  ck:Object.assign({addr:'',del:'post',time:'today',pay:'kaspi',card:'',post:{},taxi:{}},LS.get('ck',{}))};
+S.ck.post=S.ck.post||{};S.ck.taxi=S.ck.taxi||{};S.ck.cardDraft=null;
 const save=()=>{LS.set('cart',S.cart);LS.set('fav',S.fav);LS.set('orders',S.orders);LS.set('seen',S.seen)};
 const cartCount=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
 const cartSum=()=>Object.entries(S.cart).reduce((a,[id,q])=>a+P[id].p*q,0);
@@ -343,25 +362,133 @@ routes.cart=()=>{
   </div></div><div class="buybar"><button class="btn btn-g" onclick="go('#/checkout')">Тапсырыс беру</button></div>${nav('cart')}</section>`;
 };
 
-const DEL={post:{n:'Қазпошта',s:'Салмағына қарай',p:1000,i:'📦'},taxi:{n:'Такси',s:'Ұзынағаш ішінде · Басқа аймаққа келісім бойынша бөлек төленеді',p:500,i:'🚕'}};
+const DEL={post:{n:'Қазпошта',s:'Салмағына қарай · бүкіл Қазақстан',p:1000,pt:'1 000 ₸',i:'📦'},taxi:{n:'Такси · Ұзынағаш ішінде',s:'Такси қосымшасын таңдайсыз',p:500,pt:'500 ₸',i:'🚕'},taxi2:{n:'Такси · Басқа аймаққа',s:'Бағасы келісім бойынша бөлек төленеді',p:0,pt:'Келісім бойынша',i:'🛣️'}};
 const PAY=[['kaspi','Kaspi арқылы төлеу','Kaspi қосымшасы немесе QR арқылы','🟥'],['bank','Басқа банктер арқылы төлеу','Halyk, Freedom, Jusan, BCC және т.б.','🏦'],['visa','Visa картасын тіркеу','Visa / Mastercard','💳'],['remote','Қашықтан төлеу','Төлем сілтемесін басқа адамға жіберу','📨'],['cash','Қолма-қол ақша','Тауарды алғанда төлеу','💵']];
+const TAXI=[
+ ['qajet','Qajet Taxi','Отандық такси: баға алдын ала, 2GIS картасы','#16A34A','Q','https://taxi.qajet.online/',true],
+ ['yandex','Yandex Go','Ең танымал такси қызметі','#F5C400','Y','https://go.yandex/'],
+ ['indrive','inDrive','Бағаны өзіңіз ұсынасыз','#7ED321','iD','https://indrive.com/'],
+ ['alo','ALO taxi','Қазақстандық такси қосымшасы','#E53935','A',''],
+ ['glovo','Glovo','Курьерлік жеткізу','#FFC244','G','https://glovoapp.com/'],
+ ['local','Жергілікті такси қосымшалары','APARU, Tez Taxi және т.б.','#2563EB','📱',''],
+ ['own','Өз таксиіңіз','Таныс жүргізушінің нөмірін қалдырыңыз','#1C2520','👤','']];
+const OBL_CITY=[['Астана қаласы','Елорда'],['Алматы қаласы','Республикалық маңызы бар қала'],['Шымкент қаласы','Республикалық маңызы бар қала']];
+const OBL=[['Абай облысы','Семей'],['Ақмола облысы','Көкшетау'],['Ақтөбе облысы','Ақтөбе'],['Алматы облысы','Қонаев'],['Атырау облысы','Атырау'],['Батыс Қазақстан облысы','Орал'],['Жамбыл облысы','Тараз'],['Жетісу облысы','Талдықорған'],['Қарағанды облысы','Қарағанды'],['Қостанай облысы','Қостанай'],['Қызылорда облысы','Қызылорда'],['Маңғыстау облысы','Ақтау'],['Павлодар облысы','Павлодар'],['Солтүстік Қазақстан облысы','Петропавл'],['Түркістан облысы','Түркістан'],['Ұлытау облысы','Жезқазған'],['Шығыс Қазақстан облысы','Өскемен']];
+const AUD={'Алматы облысы':[['Қонаев','Облыс орталығы (қала)'],['Алатау','Қала'],['Балқаш ауданы',''],['Еңбекшіқазақ ауданы',''],['Жамбыл ауданы','Ауылдары бар'],['Іле ауданы',''],['Кеген ауданы',''],['Қарасай ауданы',''],['Райымбек ауданы',''],['Талғар ауданы',''],['Ұйғыр ауданы','']]};
+const LOC={'Жамбыл ауданы':[['Ұзынағаш','Аудан орталығы · 040600'],...['Ақсеңгір','Ақтерек','Аққайнар','Бериктас','Бозой','Жамбыл','Қарақастек','Мыңбаев','Самсы','Сарытауқұм','Талап','Темиржол','Шиен'].map(n=>[n,'Ауылдық округ'])]};
+const IDX={'Ұзынағаш':'040600'};
+const PK=()=>S.ck.post, TX=()=>S.ck.taxi;
+function phoneFmt(v){let d=v.replace(/\D/g,'');if(v.trim().startsWith('+7'))d=d.slice(1);else if(d[0]==='8'||(d.length>=11&&d[0]==='7'))d=d.slice(1);const p=d.slice(0,10);if(!p)return v.trim()?'+7':'';let s='+7 ('+p.slice(0,3);if(p.length>=3)s+=')';if(p.length>3)s+=' '+p.slice(3,6);if(p.length>6)s+='-'+p.slice(6,8);if(p.length>8)s+='-'+p.slice(8,10);return s}
+function phoneOk(v){return v.replace(/\D/g,'').length===11}
+function fld(label,id,val,ph,extra=''){return `<div class="fl"><label for="${id}">${label}</label><div class="inp"><input id="${id}" value="${esc(val||'')}" placeholder="${ph}" ${extra}></div></div>`}
+function sel(label,val,ph,onclick,dis){return `<div class="fl"><label>${label}</label><button class="inp selb ${dis?'dis':''}" onclick="${dis?`toast('Алдымен жоғарыдағы жолды толтырыңыз')`:onclick}"><span class="${val?'':'ph'}">${esc(val||ph)}</span>${I.chev}</button></div>`}
+function postAddr(p){return [p.loc,p.street,p.house].filter(Boolean).join(', ')+(p.idx?' · '+p.idx:'')}
+
+routes.post=()=>{const p=PK();
+  return `<section class="view">${topbar('Қазпошта арқылы жеткізу')}<div class="scroll"><div class="sec" style="padding-top:0">
+  <div class="lbl">МЕКЕНЖАЙ</div><div class="card blk" style="margin-top:0">
+  ${sel('Облыс',p.obl,'Облысты таңдаңыз',`go('#/pick/obl')`)}
+  ${sel('Аудан',p.aud,'Ауданды таңдаңыз',`go('#/pick/aud')`,!p.obl)}
+  ${sel('Қала / ауыл',p.loc,'Мысалы: Ұзынағаш',`go('#/pick/loc')`,!p.obl)}
+  ${fld('Көше','pstreet',p.street,'Мысалы: Абай көшесі',`oninput="PK().street=this.value"`)}
+  ${fld('Үй / пәтер','phouse',p.house,'Мысалы: 12, 5-пәтер',`oninput="PK().house=this.value"`)}
+  ${fld('Пошта индексі','pidx',p.idx,'Мысалы: 040600',`inputmode="numeric" maxlength="6" oninput="this.value=this.value.replace(/\\D/g,'');PK().idx=this.value"`)}
+  <p class="hint">Индексті білмесеңіз, оны <a href="https://post.kz" target="_blank" rel="noopener">Қазпоштаның сайтынан</a> мекенжай бойынша табуға болады.</p></div>
+  <div class="lbl">АЛУШЫ</div><div class="card blk" style="margin-top:0">
+  ${fld('Байланыс нөмірі','pphone',p.phone,'+7 (7__) ___-__-__',`type="tel" inputmode="tel" oninput="this.value=phoneFmt(this.value);PK().phone=this.value"`)}
+  ${fld('Аты-жөні','pname',p.name,'Аты-жөніңізді жазыңыз',`autocomplete="name" oninput="PK().name=this.value"`)}
+  </div></div></div><div class="buybar"><button class="btn btn-g" onclick="savePost()">Мекенжайды сақтау</button></div></section>`};
+function savePost(){const p=PK();const miss=[['obl','Облысты'],['loc','Қала / ауылды'],['street','Көшені'],['house','Үй нөмірін']].find(([k])=>!(p[k]||'').trim());
+  if(miss){toast(miss[1]+' толтырыңыз');return}
+  if(p.idx&&p.idx.length!==6){toast('Пошта индексі 6 саннан тұрады');return}
+  if(!phoneOk(p.phone||'')){toast('Байланыс нөмірін толық жазыңыз');return}
+  if(!(p.name||'').trim()){toast('Аты-жөніңізді жазыңыз');return}
+  p.ok=true;S.ck.del='post';LS.set('ck',S.ck);toast('Мекенжай сақталды');back()}
+
+let pq2='';
+routes.pick=(kind)=>{const p=PK();let title,groups;
+  if(kind==='obl'){title='Облысты таңдаңыз';groups=[['Республикалық маңызы бар қалалар',OBL_CITY],['Облыстар',OBL.map(([n,c])=>[n,'Орталығы: '+c])]]}
+  else if(kind==='aud'){title=p.obl||'Аудан';const a=AUD[p.obl];groups=a?[['Қалалар мен аудандар',a]]:[]}
+  else{title=p.aud||p.obl||'Елді мекен';const l=LOC[p.aud];groups=l?[['Елді мекендер',l]]:[]}
+  return `<section class="view">${topbar(esc(title))}<label class="search">${I.search}<input id="pq" placeholder="Атауын жазып іздеңіз" value="${esc(pq2)}" oninput="pq2=this.value;pickFilter('${kind}')" autofocus></label><div class="scroll"><div class="sec" id="plist">${pickList(kind,groups)}</div></div></section>`};
+function pickGroups(kind){const p=PK();if(kind==='obl')return [['Республикалық маңызы бар қалалар',OBL_CITY],['Облыстар',OBL.map(([n,c])=>[n,'Орталығы: '+c])]];if(kind==='aud'){const a=AUD[p.obl];return a?[['Қалалар мен аудандар',a]]:[]}const l=LOC[p.aud];return l?[['Елді мекендер',l]]:[]}
+function pickList(kind,groups){const q=pq2.trim().toLowerCase();let html='';
+  if(kind==='obl'&&!q)html+=`<p class="hint" style="margin:0 0 12px">Қазақстанда 17 облыс, 3 республикалық маңызы бар қала бар. Демода аудандар Алматы облысы, ауылдар Жамбыл ауданы бойынша берілген, басқасын өзіңіз жаза аласыз.</p>`;
+  for(const [g,items] of groups){const f=items.filter(([n])=>n.toLowerCase().includes(q));if(!f.length)continue;
+    html+=`<div class="lbl">${esc(g)}</div><div class="list">${f.map(([n,s])=>`<button class="li" onclick="pickSet('${kind}',this.dataset.v)" data-v="${esc(n)}"><span class="t"><b>${esc(n)}</b>${s?`<small>${esc(s)}</small>`:''}</span>${I.chev}</button>`).join('')}</div>`}
+  if(q&&kind!=='obl')html+=`<button class="btn btn-l" style="margin-top:12px" onclick="pickSet('${kind}',pq2.trim())">«${esc(pq2.trim())}» деп жазу</button>`;
+  if(!q&&kind!=='obl'&&!groups.length)html+=`<div class="empty" style="padding:30px 10px"><b>Атауын жазыңыз</b>Демода бұл өңірдің тізімі жоқ. Жоғарыға атауын жазып, «деп жазу» батырмасын басыңыз.</div>`;
+  if(q&&kind==='obl'&&!html)html=`<div class="empty"><b>Табылмады</b>Басқаша жазып көріңіз</div>`;
+  return html}
+function pickFilter(kind){const el=$('#plist');if(el)el.innerHTML=pickList(kind,pickGroups(kind))}
+function pickSet(kind,v){if(!v)return;const p=PK();pq2='';
+  if(kind==='obl'){if(p.obl!==v){p.aud='';p.loc=''}p.obl=v;if(/қаласы$/.test(v)){p.aud='—';p.loc=v.replace(' қаласы','');history.back();return}location.replace('#/pick/aud');return}
+  if(kind==='aud'){if(p.aud!==v)p.loc='';p.aud=v;if(!/ауданы$/.test(v)){p.loc=v;history.back();return}location.replace('#/pick/loc');return}
+  p.loc=v;if(IDX[v]&&!p.idx)p.idx=IDX[v];history.back()}
+
+routes.taxi=()=>{const t=TX();
+  return `<section class="view">${topbar('Такси арқылы жеткізу')}<div class="scroll"><div class="sec" style="padding-top:0">
+  <div class="note">🚕 Ұзынағаш ішінде – <b>500 ₸</b>. Басқа аймаққа бағасы келісім бойынша бөлек төленеді.</div>
+  <div class="lbl">ТАКСИ ҚОСЫМШАСЫН ТАҢДАҢЫЗ</div>
+  ${TAXI.map(([k,n,s,c,l,url,kz])=>`<div class="opt tx ${t.app===k?'on':''}" onclick="TX().app='${k}';render(true)"><span class="badge" style="background:${c}">${l}</span><span class="t"><b>${n}${kz?' <i class="kz">KZ</i>':''}</b><small>${s}</small></span>${k==='own'?'<span class="radio"></span>':`<button class="open" onclick="event.stopPropagation();TX().app='${k}';${url?`window.open('${url}','_blank','noopener')`:`toast('Қосымшаны телефоныңыздан ашыңыз')`};render(true)">Ашу</button>`}</div>`).join('')}
+  ${t.app==='own'?`<div class="lbl">ЖЕКЕ ТАКСИ</div><div class="card blk" style="margin-top:0">${fld('Жүргізушінің нөмірі','dphone',t.dphone,'+7 (7__) ___-__-__',`type="tel" inputmode="tel" oninput="this.value=phoneFmt(this.value);TX().dphone=this.value"`)}${fld('Жүргізушінің аты','dname',t.dname,'Мысалы: Ерлан',`oninput="TX().dname=this.value"`)}</div>`:''}
+  <div class="lbl">ЖЕТКІЗУ МЕКЕНЖАЙЫ</div><div class="card blk" style="margin-top:0">${fld('Мекенжай','taddr',S.ck.addr,'Мысалы: Ұзынағаш, Абай к-сі, 12',`oninput="S.ck.addr=this.value"`)}</div>
+  </div></div><div class="buybar"><button class="btn btn-g" onclick="saveTaxi()">Таңдауды сақтау</button></div></section>`};
+function saveTaxi(){const t=TX();if(!t.app){toast('Такси қосымшасын таңдаңыз');return}
+  if(t.app==='own'&&!phoneOk(t.dphone||'')){toast('Жүргізушінің нөмірін толық жазыңыз');return}
+  if(!S.ck.addr.trim()){toast('Жеткізу мекенжайын жазыңыз');$('#taddr').focus();return}
+  if(!/^taxi/.test(S.ck.del))S.ck.del='taxi';LS.set('ck',S.ck);toast('Такси таңдалды');back()}
+
+routes.card=()=>{const c=S.ck.cardDraft||(S.ck.cardDraft={no:'',exp:'',cvv:'',holder:''});
+  return `<section class="view">${topbar('Карта тіркеу')}<div class="scroll"><div class="sec" style="padding-top:0">
+  <div class="bank"><div class="chip-c"></div><div class="no" id="cno">${esc(c.no||'••••  ••••  ••••  ••••')}</div><div class="bf"><span id="cho">${esc(c.holder||'КАРТА ИЕСІ')}</span><span id="cex">${esc(c.exp||'••/••')}</span></div><b class="vm">Visa / Mastercard</b></div>
+  <div class="card blk">
+  ${fld('Карта нөмірі','cnum',c.no,'0000 0000 0000 0000',`inputmode="numeric" autocomplete="cc-number" oninput="this.value=this.value.replace(/\\D/g,'').slice(0,16).replace(/(\\d{4})(?=\\d)/g,'$1 ');S.ck.cardDraft.no=this.value;$('#cno').textContent=this.value||'••••  ••••  ••••  ••••'"`)}
+  <div style="display:flex;gap:10px"><div style="flex:1">${fld('Мерзімі','cexp',c.exp,'АА / ЖЖ',`inputmode="numeric" autocomplete="cc-exp" oninput="let d=this.value.replace(/\\D/g,'').slice(0,4);this.value=d.length>2?d.slice(0,2)+'/'+d.slice(2):d;S.ck.cardDraft.exp=this.value;$('#cex').textContent=this.value||'••/••'"`)}</div>
+  <div style="flex:1">${fld('CVV','ccvv','','•••',`type="password" inputmode="numeric" maxlength="3" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\\D/g,'');S.ck.cardDraft.cvv=this.value"`)}</div></div>
+  ${fld('Карта иесі','chold',c.holder,'IVAN IVANOV',`autocomplete="cc-name" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z ]/g,'');S.ck.cardDraft.holder=this.value;$('#cho').textContent=this.value||'КАРТА ИЕСІ'"`)}
+  <p class="hint">🔒 Карта деректері қорғалған байланыс арқылы банкке жіберіледі. EREKE M&D карта нөмірін сақтамайды. Бұл демо нұсқа – нақты төлем жүрмейді.</p></div>
+  </div></div><div class="buybar"><button class="btn btn-g" onclick="saveCard()">Картаны тіркеу</button></div></section>`};
+function saveCard(){const c=S.ck.cardDraft;const d=c.no.replace(/\D/g,'');
+  if(d.length!==16){toast('Карта нөмірі 16 саннан тұрады');return}
+  const [m,y]=(c.exp||'').split('/');if(!(m>=1&&m<=12&&y&&y.length===2)){toast('Мерзімін АА/ЖЖ түрінде жазыңыз');return}
+  if((c.cvv||'').length!==3){toast('CVV 3 саннан тұрады');return}
+  if(!c.holder.trim()){toast('Карта иесін латынша жазыңыз');return}
+  S.ck.card='•••• '+d.slice(-4);S.ck.cardDraft=null;S.ck.pay='visa';LS.set('ck',S.ck);toast('Карта тіркелді');back()}
+
+routes.remote=()=>{const code=S.ck.rcode||(S.ck.rcode=Math.random().toString(36).slice(2,8).toUpperCase());const link=location.origin+'/?pay='+code;const msg=`EREKE M&D: тапсырысымды төлеп жібере аласың ба? Сомасы ${fmt(cartSum()+(DEL[S.ck.del]||DEL.post).p)}. Төлем сілтемесі: ${link}`;
+  return `<section class="view">${topbar('Қашықтан төлеу')}<div class="scroll"><div class="sec" style="padding-top:0">
+  <div class="card blk" style="text-align:center"><div style="font-size:44px">📨</div><h3 style="margin-top:6px">Төлем сілтемесін жіберу</h3><p class="hint" style="margin-top:0">Сілтемені жақыныңызға жіберіңіз – ол тапсырысыңызды өз телефонынан төлей алады.</p>
+  <div class="inp" style="margin-top:12px"><input readonly value="${esc(link)}" id="rlink"></div><p class="hint">⏱ Сілтеме 24 сағат жарамды</p></div>
+  <a class="btn" style="background:#25D366;color:#fff;margin-top:12px" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">WhatsApp арқылы жіберу</a>
+  <a class="btn" style="background:#229ED9;color:#fff;margin-top:10px" href="https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Telegram арқылы жіберу</a>
+  <button class="btn btn-l" style="margin-top:10px" onclick="navigator.clipboard&&navigator.clipboard.writeText($('#rlink').value).then(()=>toast('Сілтеме көшірілді'),()=>toast('Көшіру мүмкін болмады'))">Сілтемені көшіру</button>
+  </div></div><div class="buybar"><button class="btn btn-g" onclick="S.ck.pay='remote';LS.set('ck',S.ck);back()">Дайын</button></div></section>`};
+
 routes.checkout=()=>{
   if(!cartCount())return routes.cart();
-  const k=S.ck;const d=DEL[k.del];
+  const k=S.ck;const d=DEL[k.del]||DEL.post;const p=k.post,t=k.taxi;const tn=t.app&&TAXI.find(x=>x[0]===t.app);
+  const addrBlock=k.del==='post'
+    ?`<button class="addr" onclick="go('#/post')"><span class="oi">${I.pin}</span><span class="t">${p.ok?`<b>${esc(postAddr(p))}</b><small>${esc([p.obl,p.aud!=='—'?p.aud:''].filter(Boolean).join(', '))} · ${esc(p.name)} · ${esc(p.phone)}</small>`:`<b>Қазпошта мекенжайын толтырыңыз</b><small>Облыс, аудан, ауыл, көше, индекс, алушы</small>`}</span>${I.chev}</button>`
+    :`<button class="addr" onclick="go('#/taxi')"><span class="oi">${I.pin}</span><span class="t">${k.addr&&tn?`<b>${esc(k.addr)}</b><small>${esc(tn[1])}${t.app==='own'&&t.dphone?' · '+esc(t.dphone):''}</small>`:`<b>Такси мен мекенжайды таңдаңыз</b><small>Qajet Taxi, Yandex Go, inDrive және т.б.</small>`}</span>${I.chev}</button>`;
   return `<section class="view">${topbar('Тапсырыс беру')}<div class="scroll"><div class="sec" style="padding-top:0">
-  <div class="card blk"><h3>Жеткізу мекенжайы</h3><label class="inp">${I.pin}<input id="addr" placeholder="Мекенжайды енгізіңіз" value="${esc(k.addr)}" oninput="S.ck.addr=this.value"></label></div>
-  <div class="card blk"><h3>Жеткізу тәсілі</h3>${Object.entries(DEL).map(([key,o])=>`<button class="opt ${k.del===key?'on':''}" onclick="S.ck.del='${key}';render(true)"><span class="oi">${o.i}</span><span class="t"><b>${o.n}</b><small>${o.s}</small><em>${fmt(o.p)}</em></span><span class="radio"></span></button>`).join('')}</div>
+  <div class="card blk"><h3>Жеткізу мекенжайы</h3>${addrBlock}</div>
+  <div class="card blk"><h3>Жеткізу тәсілі</h3>${Object.entries(DEL).map(([key,o])=>`<button class="opt ${k.del===key?'on':''}" onclick="S.ck.del='${key}';LS.set('ck',S.ck);go('${key==='post'?'#/post':'#/taxi'}')"><span class="oi">${o.i}</span><span class="t"><b>${o.n}</b><small>${o.s}</small><em>${o.pt}</em></span><span class="radio"></span></button>`).join('')}</div>
   <div class="card blk"><h3>Жеткізу уақыты</h3>${[['today','Бүгін, 18:00–21:00'],['tomorrow','Ертең, 10:00–14:00']].map(([key,l])=>`<button class="tline ${k.time===key?'on':''}" onclick="S.ck.time='${key}';render(true)"><span class="radio"></span>${l}</button>`).join('')}</div>
-  <div class="card blk"><h3>Төлем әдісі</h3>${PAY.map(([key,n,s,i])=>`<button class="opt ${k.pay===key?'on':''}" onclick="S.ck.pay='${key}';render(true)"><span class="oi">${i}</span><span class="t"><b>${n}</b><small>${s}</small></span><span class="radio"></span></button>`).join('')}</div>
-  <div class="card sum" style="margin-top:12px"><div class="row"><span>Тауарлар</span><span>${fmt(cartSum())}</span></div><div class="row"><span>Жеткізу (${d.n})</span><span>${fmt(d.p)}</span></div><div class="row tot"><span>Барлығы</span><span>${fmt(cartSum()+d.p)}</span></div></div>
+  <div class="card blk"><h3>Төлем әдісі</h3>${PAY.map(([key,n,s,i])=>{const sub=key==='visa'&&k.card?'Тіркелген карта: '+k.card:s;const nav=key==='visa'?(k.card?'':`go('#/card')`):key==='remote'?`go('#/remote')`:'';return `<button class="opt ${k.pay===key?'on':''}" onclick="S.ck.pay='${key}';LS.set('ck',S.ck);${nav||'render(true)'}"><span class="oi">${i}</span><span class="t"><b>${n}</b><small>${esc(sub)}</small>${key==='visa'&&k.card?`<em onclick="event.stopPropagation();go('#/card')">Басқа карта тіркеу</em>`:''}</span><span class="radio"></span></button>`}).join('')}</div>
+  <div class="card sum" style="margin-top:12px"><div class="row"><span>Тауарлар</span><span>${fmt(cartSum())}</span></div><div class="row"><span>Жеткізу (${d.n})</span><span>${d.p?fmt(d.p):d.pt}</span></div><div class="row tot"><span>Барлығы</span><span>${fmt(cartSum()+d.p)}</span></div></div>
   </div></div><div class="buybar"><button class="btn btn-g" onclick="placeOrder()">Тапсырысты растау</button></div></section>`;
 };
 function placeOrder(){
-  if(!S.ck.addr.trim()){toast('Жеткізу мекенжайын енгізіңіз');$('#addr').focus();return}
-  const d=DEL[S.ck.del];
-  S.orders.unshift({no:Math.floor(100000+Math.random()*899999),t:Date.now(),items:{...S.cart},sum:cartSum()+d.p,del:d.n,addr:S.ck.addr,pay:PAY.find(x=>x[0]===S.ck.pay)[1]});
-  S.cart={};save();go('#/done');
+  const k=S.ck;const d=DEL[k.del]||DEL.post;
+  if(k.del==='post'&&!k.post.ok){toast('Қазпошта мекенжайын толтырыңыз');go('#/post');return}
+  if(k.del!=='post'&&(!k.taxi.app||!k.addr.trim())){toast('Такси мен мекенжайды таңдаңыз');go('#/taxi');return}
+  if(k.pay==='visa'&&!k.card){go('#/card');return}
+  const addr=k.del==='post'?postAddr(k.post):k.addr;
+  S.orders.unshift({no:Math.floor(100000+Math.random()*899999),t:Date.now(),items:{...S.cart},sum:cartSum()+d.p,del:d.n,addr,pay:PAY.find(x=>x[0]===k.pay)[1]});
+  S.cart={};k.rcode=null;save();LS.set('ck',k);go('#/done');
 }
+
 routes.done=()=>`<section class="view"><div class="done"><div class="ok">${I.check}</div><h2>Тапсырыс қабылданды!</h2><p>Тапсырысыңыз жақын арада өңделеді.<br>Рақмет!</p><div class="btns"><button class="btn btn-l" onclick="go('#/orders')">Тапсырысты бақылау</button><button class="btn btn-g" onclick="go('#/home')">Басты бетке қайту</button></div></div></section>`;
 
 routes.orders=()=>{
