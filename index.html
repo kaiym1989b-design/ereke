@@ -213,10 +213,103 @@ button{border:0;background:none;cursor:pointer}
 .toast{position:absolute;left:50%;bottom:100px;transform:translate(-50%,16px);background:#1c2520;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:50;pointer-events:none;max-width:86%;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .demo{position:absolute;top:calc(env(safe-area-inset-top) + 4px);left:50%;transform:translateX(-50%);z-index:60;font-size:9px;font-weight:800;letter-spacing:.08em;background:rgba(0,0,0,.35);color:#fff;padding:2px 7px;border-radius:5px;pointer-events:none}
+
+/* ===== DESKTOP (≥1024px) ===== */
+.dk{display:none}
+#dh{display:none}
+@media(min-width:1024px){
+ body{display:block;background:var(--bg)!important;height:auto}
+ html,body{height:auto}
+ .app{max-width:none;height:auto!important;min-height:100vh;border-radius:0!important;box-shadow:none!important;overflow:visible;background:var(--bg)}
+ .demo{display:none}
+ #dh{display:block;position:sticky;top:0;z-index:40;background:#fff;box-shadow:0 1px 0 var(--line),0 6px 20px rgba(20,40,25,.04)}
+ .dh-in{max-width:1240px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:20px}
+ #dh>.dh-in{height:76px}
+ .dh-logo{display:flex;align-items:center;gap:12px;text-align:left;flex:none}
+ .dh-logo img{width:46px;height:46px;border-radius:50%}
+ .dh-logo b{display:block;font-size:20px;font-weight:800;color:var(--g);letter-spacing:.3px}
+ .dh-logo small{display:block;font-size:12px;color:var(--mut)}
+ .dh-search{flex:1;display:flex;align-items:center;gap:10px;height:48px;border-radius:14px;background:var(--bg);border:1.5px solid transparent;padding:0 16px;transition:.15s}
+ .dh-search:focus-within{border-color:var(--g);background:#fff}
+ .dh-search svg{color:var(--mut);width:20px;height:20px}.dh-search input{flex:1;border:0;outline:0;background:none;font-size:15px}
+ .dh-loc{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--ink)}.dh-loc svg{width:18px;height:18px;color:var(--g)}
+ .dh-nav{display:flex;gap:4px}
+ .dh-nav button{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;font-weight:500;color:var(--mut);padding:8px 12px;border-radius:12px}
+ .dh-nav button:hover{background:var(--bg);color:var(--ink)}.dh-nav button.on{color:var(--g);font-weight:700}
+ .dh-nav svg{width:24px;height:24px}
+ .dh-c{position:absolute;top:2px;right:8px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;font-style:normal;display:grid;place-items:center}
+ .dh-cats{border-top:1px solid var(--line)}
+ .dh-cats .dh-in{height:46px;gap:4px;overflow-x:auto;scrollbar-width:none}
+ .dh-cats button{padding:7px 10px;border-radius:10px;font-size:14px;font-weight:600;color:#3d4a40;white-space:nowrap}
+ .dh-cats button:hover{background:var(--bg)}.dh-cats button.on{background:var(--gl);color:var(--g2)}
+ .dh-seller{margin-left:auto;font-size:13px;font-weight:700;color:var(--g2);text-decoration:none;background:var(--gl);padding:7px 12px;border-radius:10px;white-space:nowrap}
+ #root{max-width:1240px;margin:0 auto;padding:0 32px 60px}
+ .view{position:static;inset:auto;min-height:calc(100vh - 122px)}
+ .scroll{overflow:visible;padding-bottom:0}
+ .nav{display:none}
+ .toast{position:fixed;bottom:40px}
+ .top{background:transparent;padding:28px 0 6px}
+ .top h1{text-align:left;font-size:28px;font-weight:800}
+ .top>span:last-child:empty,.top>span[style]{display:none}
+ .view:not(.wide) .scroll,.view:not(.wide)>.top,.view:not(.wide)>.buybar,.view:not(.wide)>.search{max-width:720px;width:100%;margin-left:auto;margin-right:auto}
+ .buybar{background:transparent;border:0;padding:16px 0 0}
+ .sec{padding:28px 0 0}
+ .sec-h h2{font-size:24px}
+ .search{margin:0}
+ .sview>.search,.hview .hhead,.hview>.scroll>.search{display:none}
+ .dk{display:flex}
+ /* home */
+ .banner{margin:28px 0 0;height:340px;border-radius:28px;padding:48px 52px;background:linear-gradient(100deg,#1f6a25 0%,#2E7D32 38%,rgba(46,125,50,.15) 70%,rgba(46,125,50,0) 100%),url(img/p/saumal.webp) right center/62% auto no-repeat,#bcd9bd}
+ .banner .tagx{font-size:13px;padding:6px 10px}
+ .banner h3{font-size:44px;max-width:520px;margin-top:16px}
+ .banner p{font-size:17px;max-width:460px;margin-top:12px}
+ .banner button{font-size:16px;padding:13px 26px;border-radius:14px;margin-top:22px}
+ .quick{grid-template-columns:repeat(4,1fr);gap:16px;padding:20px 0 0}
+ .quick button{flex-direction:row;justify-content:center;gap:12px;padding:20px;font-size:15px;border-radius:18px}
+ .quick button:hover,.cat:hover img,.pc:hover{box-shadow:0 8px 24px rgba(20,60,25,.10)}
+ .cats{grid-auto-flow:row;grid-template-rows:none;grid-template-columns:repeat(6,1fr);gap:18px;overflow:visible}
+ .cat{font-size:14px;gap:10px}.cat img{width:100%;height:auto;aspect-ratio:1;max-width:150px;border-radius:24px;transition:.2s}
+ .hscroll{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;overflow:visible;margin:0;padding:0}
+ .hscroll .pc,.grid .pc{width:auto}
+ .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px}
+ .pc{border-radius:20px;transition:.2s}.pc img{height:190px}.pc .b{padding:14px}.pc .n{font-size:15.5px}.pc .p{font-size:17px}
+ .pc .add{width:38px;height:38px;border-radius:12px;right:14px!important;bottom:14px!important}
+ /* category list as grid */
+ .cview2 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;background:none;border:0;overflow:visible}
+ .cview2 .li{background:var(--card);border:1px solid var(--line)!important;border-radius:18px;padding:14px}
+ .cview2 .li img{width:72px;height:72px;border-radius:14px}
+ .cview2 .chips{padding:14px 0 0}
+ .cview2>.scroll>.search{max-width:520px}
+ /* product */
+ .pview{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:48px;align-items:start;padding-top:32px}
+ .pview>.scroll{display:contents}
+ .pview .pimg{grid-row:1 / span 3;height:auto;aspect-ratio:1;border-radius:28px;overflow:hidden;position:sticky;top:150px}
+ .pview .pimg .tb{top:16px}
+ .pview .pbody{padding:8px 0 0}
+ .pview .pname{font-size:38px}.pview .pprice{font-size:36px}.pview .pdesc{font-size:16.5px;max-width:560px}
+ .pview .buybar{grid-column:2;grid-row:2;padding:24px 0 0;align-self:start}
+ .pview .buybar .btn{max-width:360px}
+ /* cart & checkout */
+ .cview>.scroll>.sec,.kview>.scroll>.sec{display:grid;grid-template-columns:minmax(0,1fr) 380px;column-gap:28px;align-items:start}
+ .cview>.scroll>.sec>*,.kview>.scroll>.sec>*{grid-column:1}
+ .cview .sum,.kview .sum{grid-column:2!important;grid-row:1 / span 20;position:sticky;top:140px;margin-top:12px!important;padding:22px;border-radius:20px}
+ .kview .sum{margin-top:12px!important}
+ .cview>.buybar,.kview>.buybar{display:none}
+ .ci{padding:16px}.ci img{width:84px;height:84px}
+ /* welcome */
+ #welcome::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.82) 34%,rgba(255,255,255,0) 62%)}
+ #welcome{position:relative;min-height:calc(100vh - 122px);border-radius:28px;margin-top:24px;overflow:hidden;align-items:flex-start;text-align:left;background-position:center 70%}
+ #welcome .wrap{align-items:flex-start;padding:70px 64px;max-width:640px}
+ #welcome .logo{width:170px;height:170px}
+ #welcome h1{font-size:56px}#welcome .tag{font-size:34px}#welcome .sub{font-size:17px}
+ #welcome .go{margin-top:36px;margin-bottom:0;max-width:300px}
+ .done{min-height:60vh}.done .btns{max-width:420px}
+ .ord{padding:18px}
+}
 </style>
 </head>
 <body>
-<div class="app" id="app"><div class="demo">ДЕМО</div><div id="root"></div><div class="toast" id="toast"></div></div>
+<div class="app" id="app"><div class="demo">ДЕМО</div><header id="dh"></header><div id="root"></div><div class="toast" id="toast"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="data.js"></script>
@@ -302,7 +395,7 @@ routes.welcome=()=>`<section class="view" id="welcome"><div class="wrap"><img cl
 routes.home=()=>{
   const seen=S.seen.map(id=>P[id]).filter(Boolean);
   const pop=['qymyz','gul-baly','zharma-qurt','airan','irimshik','tonar-nan'].map(id=>P[id]).filter(Boolean);
-  return `<section class="view"><div class="scroll">
+  return `<section class="view wide hview"><div class="scroll">
   <div class="hhead"><img src="img/logo.png" alt=""><b>EREKE</b><span class="loc">${I.pin}Ұзынағаш</span><button class="ib" onclick="toast('Жаңа хабарландыру жоқ')" aria-label="Хабарландырулар">${I.bell}<span class="dot"></span></button></div>
   <label class="search" onclick="go('#/search')">${I.search}<input placeholder="Тауарларды, брендті іздеу" readonly></label>
   <div class="banner"><span class="tagx">ЕРЕКЕ СЫЙ</span><h3>Әр тапсырысқа қосымша сыйлық!</h3><p>Сүт, құрт, бал, шай — бәрі бір себетте</p><button onclick="go('#/all')">Қарау</button></div>
@@ -314,14 +407,14 @@ routes.home=()=>{
   </div>${nav('home')}</section>`;
 };
 
-routes.all=()=>`<section class="view">${topbar('Барлық тауарлар')}<div class="scroll"><div class="sec" style="padding-top:6px"><div class="grid">${PRODUCTS.map(pcard).join('')}</div></div></div>${nav('home')}</section>`;
+routes.all=()=>`<section class="view wide">${topbar('Барлық тауарлар')}<div class="scroll"><div class="sec" style="padding-top:6px"><div class="grid">${PRODUCTS.map(pcard).join('')}</div></div></div>${nav('home')}</section>`;
 
 let catFilter='';
 routes.c=(id)=>{
   const c=C[id];if(!c)return routes.home();
   const items=PRODUCTS.filter(p=>p.c===c.n&&(!catFilter||p.n.toLowerCase().includes(catFilter)));
   const all=PRODUCTS.filter(p=>p.c===c.n);
-  return `<section class="view">${topbar(esc(c.n))}<div class="scroll">
+  return `<section class="view wide cview2">${topbar(esc(c.n))}<div class="scroll">
   <label class="search">${I.search}<input id="cq" placeholder="${esc(c.n)} өнімдерін іздеу" value="${esc(catFilter)}" oninput="catFilter=this.value.toLowerCase();renderList('${id}')"></label>
   <div class="chips"><button class="chip on">Барлығы</button><button class="chip" onclick="toast('Сүзгі жақында қосылады')">Жергілікті</button><button class="chip" onclick="toast('Сүзгі жақында қосылады')">Жеңілдікпен</button><button class="chip" onclick="toast('Сүзгі жақында қосылады')">Жаңа</button></div>
   <div class="sec"><div class="sec-h"><h2>${esc(c.n)} түрлері</h2><span>${all.length} түрі</span></div><div class="list" id="clist">${items.map(li).join('')||'<div class="empty">Ештеңе табылмады</div>'}</div></div>
@@ -334,7 +427,7 @@ routes.p=(id)=>{
   const p=P[id];if(!p)return routes.home();
   S.seen=[id,...S.seen.filter(x=>x!==id)].slice(0,8);save();
   const f=S.fav.includes(id);const b=BENEFITS[p.n];
-  return `<section class="view"><div class="scroll">
+  return `<section class="view wide pview"><div class="scroll">
   <div class="pimg"><img src="${img(p)}" alt="${esc(p.n)}"><div class="tb"><button class="ib" onclick="back()" aria-label="Артқа">${I.back}</button><span class="sp"></span><button class="ib fav ${f?'on':''}" style="position:static;width:40px;height:40px" onclick="togFav('${id}',this)" aria-label="Таңдаулы">${f?I.heartF:I.heart}</button><button class="ib" onclick="share('${id}')" aria-label="Бөлісу">${I.share}</button></div></div>
   <div class="pbody"><button class="pchip" onclick="go('#/c/${catId(p.c)}')">${esc(p.c)}</button>
   <div class="pname">${esc(p.n)}</div><div class="psize">${esc(p.s)}</div><div class="pprice">${fmt(p.p)}</div>
@@ -360,9 +453,9 @@ routes.cart=()=>{
   const items=Object.entries(S.cart).filter(([id])=>P[id]);
   if(!items.length)return `<section class="view">${topbar('Себет')}<div class="scroll"><div class="empty"><div class="ei">${I.cart}</div><b>Себет бос</b>Өнімдерді таңдап, себетке қосыңыз</div><div class="sec"><button class="btn btn-g" onclick="go('#/home')">Сатып алуды бастау</button></div></div>${nav('cart')}</section>`;
   const n=cartCount();
-  return `<section class="view">${topbar('Себет')}<div class="scroll"><div class="sec" style="padding-top:6px">
+  return `<section class="view wide cview">${topbar('Себет')}<div class="scroll"><div class="sec" style="padding-top:6px">
   <div class="card">${items.map(([id,q])=>{const p=P[id];return `<div class="ci"><img src="${img(p)}" alt="" onclick="go('#/p/${id}')"><div class="t"><b>${esc(p.n)}</b><small>${esc(p.s)}</small><div class="pr">${fmt(p.p*q)}</div></div><div class="r"><button onclick="setQty('${id}',0)" style="color:var(--mut)" aria-label="Жою">${I.trash}</button><div class="qty"><button onclick="setQty('${id}',${q-1})">−</button><span>${q}</span><button onclick="setQty('${id}',${q+1})">+</button></div></div></div>`}).join('<div style="height:1px;background:var(--line);margin:0 12px"></div>')}</div>
-  <div class="card sum" style="margin-top:12px"><div class="row"><span>Тауарлар (${n} дана)</span><span>${fmt(cartSum())}</span></div><div class="row"><span>Жеткізу</span><span>Тәсіліне қарай</span></div><div class="row tot"><span>Жалпы сомасы</span><span>${fmt(cartSum())}</span></div></div>
+  <div class="card sum" style="margin-top:12px"><div class="row"><span>Тауарлар (${n} дана)</span><span>${fmt(cartSum())}</span></div><div class="row"><span>Жеткізу</span><span>Тәсіліне қарай</span></div><div class="row tot"><span>Жалпы сомасы</span><span>${fmt(cartSum())}</span></div><button class="btn btn-g dk" style="margin-top:14px" onclick="go('#/checkout')">Тапсырыс беру</button><button class="btn btn-l dk" style="margin-top:10px" onclick="go('#/home')">Сатып алуды жалғастыру</button></div>
   </div></div><div class="buybar"><button class="btn btn-g" onclick="go('#/checkout')">Тапсырыс беру</button></div>${nav('cart')}</section>`;
 };
 
@@ -480,13 +573,13 @@ routes.checkout=()=>{
   const addrBlock=k.del==='post'
     ?`<button class="addr" onclick="go('#/post')"><span class="oi">${I.pin}</span><span class="t">${p.ok?`<b>${esc(postAddr(p))}</b><small>${esc([p.obl,p.aud!=='—'?p.aud:''].filter(Boolean).join(', '))} · ${esc(p.name)} · ${esc(p.phone)}</small>`:`<b>Қазпошта мекенжайын толтырыңыз</b><small>Облыс, аудан, ауыл, көше, индекс, алушы</small>`}</span>${I.chev}</button>`
     :`<button class="addr" onclick="go('#/taxi')"><span class="oi">${I.pin}</span><span class="t">${k.addr&&tn?`<b>${esc(k.addr)}</b><small>${esc(tn[1])}${(t.app==='own'||t.app==='local')&&t.dphone?' · '+esc(t.dname||'')+' '+esc(t.dphone):''}</small>`:`<b>Такси мен мекенжайды таңдаңыз</b><small>Qajet Taxi, Yandex Go, inDrive және т.б.</small>`}</span>${I.chev}</button>`;
-  return `<section class="view">${topbar('Тапсырыс беру')}<div class="scroll"><div class="sec" style="padding-top:0">
+  return `<section class="view wide kview">${topbar('Тапсырыс беру')}<div class="scroll"><div class="sec" style="padding-top:0">
   <div class="card blk"><h3>Байланыс</h3>${fld('Аты-жөніңіз','cname',k.cname??(p.name||''),'Мысалы: Айгүл',`autocomplete="name" oninput="S.ck.cname=this.value;LS.set('ck',S.ck)"`)}${fld('Телефон нөміріңіз','cphone',k.cphone??(p.phone||''),'+7 (7__) ___-__-__',`type="tel" inputmode="tel" oninput="this.value=phoneFmt(this.value);S.ck.cphone=this.value;LS.set('ck',S.ck)"`)}</div>
   <div class="card blk"><h3>Жеткізу мекенжайы</h3>${addrBlock}</div>
   <div class="card blk"><h3>Жеткізу тәсілі</h3>${Object.entries(DEL).map(([key,o])=>`<button class="opt ${k.del===key?'on':''}" onclick="S.ck.del='${key}';LS.set('ck',S.ck);go('${key==='post'?'#/post':'#/taxi'}')"><span class="oi">${o.i}</span><span class="t"><b>${o.n}</b><small>${o.s}</small><em>${o.pt}</em></span><span class="radio"></span></button>`).join('')}</div>
   <div class="card blk"><h3>Жеткізу уақыты</h3>${[['today','Бүгін, 18:00–21:00'],['tomorrow','Ертең, 10:00–14:00']].map(([key,l])=>`<button class="tline ${k.time===key?'on':''}" onclick="S.ck.time='${key}';render(true)"><span class="radio"></span>${l}</button>`).join('')}</div>
   <div class="card blk"><h3>Төлем әдісі</h3>${PAY.map(([key,n,s,i])=>{const sub=key==='visa'&&k.card?'Тіркелген карта: '+k.card:s;const nav=key==='visa'?(k.card?'':`go('#/card')`):key==='remote'?`go('#/remote')`:'';return `<button class="opt ${k.pay===key?'on':''}" onclick="S.ck.pay='${key}';LS.set('ck',S.ck);${nav||'render(true)'}"><span class="oi">${i}</span><span class="t"><b>${n}</b><small>${esc(sub)}</small>${key==='visa'&&k.card?`<em onclick="event.stopPropagation();go('#/card')">Басқа карта тіркеу</em>`:''}</span><span class="radio"></span></button>`}).join('')}</div>
-  <div class="card sum" style="margin-top:12px"><div class="row"><span>Тауарлар</span><span>${fmt(cartSum())}</span></div><div class="row"><span>Жеткізу (${d.n})</span><span>${d.p?fmt(d.p):d.pt}</span></div><div class="row tot"><span>Барлығы</span><span>${fmt(cartSum()+d.p)}</span></div></div>
+  <div class="card sum" style="margin-top:12px"><div class="row"><span>Тауарлар</span><span>${fmt(cartSum())}</span></div><div class="row"><span>Жеткізу (${d.n})</span><span>${d.p?fmt(d.p):d.pt}</span></div><div class="row tot"><span>Барлығы</span><span>${fmt(cartSum()+d.p)}</span></div><button class="btn btn-g dk" style="margin-top:14px" onclick="placeOrder()">Тапсырысты растау</button></div>
   </div></div><div class="buybar"><button class="btn btn-g" onclick="placeOrder()">Тапсырысты растау</button></div></section>`;
 };
 async function placeOrder(){
@@ -526,11 +619,11 @@ routes.orders=()=>{
 
 routes.fav=()=>{
   const items=S.fav.map(id=>P[id]).filter(Boolean);
-  return `<section class="view">${topbar('Таңдаулылар')}<div class="scroll">${items.length?`<div class="sec" style="padding-top:6px"><div class="grid">${items.map(pcard).join('')}</div></div>`:`<div class="empty"><div class="ei">${I.heart}</div><b>Таңдаулылар бос</b>Ұнаған өнімнің ♡ белгісін басыңыз</div>`}</div>${nav('fav')}</section>`;
+  return `<section class="view wide">${topbar('Таңдаулылар')}<div class="scroll">${items.length?`<div class="sec" style="padding-top:6px"><div class="grid">${items.map(pcard).join('')}</div></div>`:`<div class="empty"><div class="ei">${I.heart}</div><b>Таңдаулылар бос</b>Ұнаған өнімнің ♡ белгісін басыңыз</div>`}</div>${nav('fav')}</section>`;
 };
 
 let sq='';
-routes.search=()=>`<section class="view">${topbar('Іздеу')}<label class="search">${I.search}<input id="sq" placeholder="Мысалы: құрт, бал, шай" value="${esc(sq)}" oninput="sq=this.value;doSearch()" autofocus></label><div class="scroll"><div class="sec" id="sres"></div></div>${nav('home')}</section>`;
+routes.search=()=>`<section class="view wide sview">${topbar('Іздеу')}<label class="search">${I.search}<input id="sq" placeholder="Мысалы: құрт, бал, шай" value="${esc(sq)}" oninput="sq=this.value;doSearch()" autofocus></label><div class="scroll"><div class="sec" id="sres"></div></div>${nav('home')}</section>`;
 function doSearch(){
   const q=sq.trim().toLowerCase();const el=$('#sres');if(!el)return;
   if(!q){el.innerHTML=`<div class="sec-h"><h2>Санаттар</h2></div><div class="chips" style="padding:0;flex-wrap:wrap">${CATS.map(c=>`<button class="chip" onclick="go('#/c/${c.id}')">${esc(c.n)}</button>`).join('')}</div>`;return}
@@ -571,15 +664,28 @@ if(SB){syncProducts();fetchOrders();
   try{SB.channel('erke-products').on('postgres_changes',{event:'*',schema:'public',table:'products'},pl=>{applyProducts([pl.new]);if(!busy())render(true)}).subscribe()}catch(e){}
   setInterval(()=>{if(/^#\/(orders|done|profile)/.test(location.hash)||document.visibilityState==='visible')fetchOrders()},4000)}
 
+/* desktop header */
+const DESK=matchMedia('(min-width:1024px)');
+function buildDH(){const el=$('#dh');if(!el||el.dataset.ok)return;el.dataset.ok=1;
+  el.innerHTML=`<div class="dh-in"><button class="dh-logo" onclick="go('#/home')"><img src="img/logo.png" alt=""><span><b>EREKE M&amp;D</b><small>Табиғи өнімдер дүкені</small></span></button>
+  <label class="dh-search">${I.search}<input id="dhq" placeholder="Тауарларды іздеу: құрт, бал, шай..." oninput="sq=this.value;if(location.hash.indexOf('#/search')!==0)go('#/search');else doSearch()"></label>
+  <span class="dh-loc">${I.pin}Ұзынағаш</span>
+  <nav class="dh-nav"><button data-k="orders" onclick="go('#/orders')">${I.orders}<span>Тапсырыстар</span></button><button data-k="fav" onclick="go('#/fav')">${I.heart}<span>Таңдаулы</span></button><button data-k="cart" onclick="go('#/cart')">${I.cart}<span>Себет</span><i class="dh-c"></i></button><button data-k="profile" onclick="go('#/profile')">${I.user}<span>Профиль</span></button></nav></div>
+  <div class="dh-cats"><div class="dh-in">${CATS.map(c=>`<button data-c="${c.id}" onclick="go('#/c/${c.id}')">${esc(c.n)}</button>`).join('')}<a class="dh-seller" href="https://ereke-pay.vercel.app" target="_blank" rel="noopener">Сатушыларға: ERKE PAY</a></div></div>`}
+function updDH(r,arg){buildDH();const el=$('#dh');if(!el)return;el.querySelectorAll('.dh-nav button').forEach(b=>b.classList.toggle('on',b.dataset.k===r||(r==='checkout'&&b.dataset.k==='cart')));
+  el.querySelectorAll('.dh-cats button').forEach(b=>b.classList.toggle('on',r==='c'&&b.dataset.c===arg));
+  const c=cartCount();const ci=el.querySelector('.dh-c');ci.textContent=c||'';ci.style.display=c?'':'none';
+  const q=$('#dhq');if(q&&r!=='search'&&document.activeElement!==q)q.value='';}
 function render(keepScroll){
-  const sc=document.querySelector('.scroll');const y=keepScroll&&sc?sc.scrollTop:0;
+  const sc=document.querySelector('.scroll');const y=keepScroll&&sc?sc.scrollTop:0;const wy=window.scrollY;
   const h=location.hash.replace(/^#\/?/,'')||'welcome';const [r,arg]=h.split('/');
   const fn=routes[r]||routes.welcome;
   if(!keepScroll&&r==='c')catFilter='';
   if(!keepScroll&&r==='p')pq=1;
   $('#root').innerHTML=fn(arg?decodeURIComponent(arg):undefined);
-  const sc2=document.querySelector('.scroll');if(sc2)sc2.scrollTop=y;
+  const sc2=document.querySelector('.scroll');if(sc2)sc2.scrollTop=y;if(keepScroll&&DESK.matches)window.scrollTo(0,wy);
   if(r==='search')doSearch();
+  updDH(r,arg);if(DESK.matches&&!keepScroll)window.scrollTo(0,0);
   document.querySelector('meta[name=theme-color]').content=r==='welcome'?'#cfe3f2':'#F3F5F2';
 }
 render();

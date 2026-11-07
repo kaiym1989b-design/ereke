@@ -139,6 +139,13 @@ textarea.inp{height:auto;min-height:90px;padding:12px 14px;resize:vertical}
 .note{background:var(--gold1);border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.45}
 .err{background:var(--can1);color:var(--can);border-radius:12px;padding:10px 12px;font-size:13.5px}
 .link{color:var(--b5);font-weight:600}
+@media (min-width:900px){
+ .auth{flex-direction:row;align-items:stretch}
+ .auth .hd{flex:1.1;justify-content:center;padding:64px 72px;background:radial-gradient(circle at 20% 15%,#2E7D32,#0E3B17 70%);gap:36px}
+ .auth .hd h1{font-size:46px;line-height:1.1}.auth .hd p{font-size:18px;max-width:460px}
+ .auth .bd{flex:1;justify-content:center;max-width:none;align-self:stretch;padding:64px 9%;background:var(--card)}
+ .auth .bd>*{max-width:440px;width:100%;margin:0 auto}
+}
 /* toast & notif */
 #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
