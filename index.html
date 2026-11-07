@@ -285,7 +285,7 @@ function li(p){return `<button class="li" onclick="go('#/p/${p.id}')"><img src="
 
 /* actions */
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2000)}
-function addCart(id,q){S.cart[id]=(S.cart[id]||0)+q;save();toast(`${P[id].n} себетке қосылды`);const b=document.querySelector('.nav .badge');if(b)b.textContent=cartCount();else render(true)}
+function addCart(id,q,toCart){S.cart[id]=(S.cart[id]||0)+q;save();toast(`${P[id].n} себетке қосылды`);if(toCart){go('#/cart');return}const b=document.querySelector('.nav .badge');if(b)b.textContent=cartCount();else render(true)}
 function setQty(id,q){if(q<=0)delete S.cart[id];else S.cart[id]=q;save();render(true)}
 function togFav(id,el){const i=S.fav.indexOf(id);i<0?S.fav.push(id):S.fav.splice(i,1);save();
   if(el){const on=S.fav.includes(id);el.classList.toggle('on',on);el.innerHTML=on?I.heartF:I.heart}
@@ -338,7 +338,7 @@ routes.p=(id)=>{
   ${b?`<button class="benef" onclick="go('#/b/${id}')"><span class="ic">${I.book}</span><span style="flex:1"><b>${esc(p.n)} пайдасы</b><small>Құрамы, пайдасы және ескертулер</small></span><span style="color:var(--g)">${I.chev}</span></button>`:''}
   <div class="feats"><div>${I.leaf}Табиғи өнім</div><div>${I.shield}Сапа кепілі</div><div>${I.truck}Жылдам жеткізу</div></div>
   </div></div>
-  <div class="buybar"><div class="qty"><button onclick="pq=Math.max(1,pq-1);$('#pqv').textContent=pq" aria-label="Азайту">−</button><span id="pqv">${pq}</span><button onclick="pq++;$('#pqv').textContent=pq" aria-label="Көбейту">+</button></div><button class="btn btn-g" style="flex:1" onclick="addCart('${id}',pq);pq=1;$('#pqv').textContent=1">Себетке қосу</button></div></section>`;
+  <div class="buybar"><div class="qty"><button onclick="pq=Math.max(1,pq-1);$('#pqv').textContent=pq" aria-label="Азайту">−</button><span id="pqv">${pq}</span><button onclick="pq++;$('#pqv').textContent=pq" aria-label="Көбейту">+</button></div><button class="btn btn-g" style="flex:1" onclick="addCart('${id}',pq,true);pq=1">Себетке қосу</button></div></section>`;
 };
 
 routes.b=(id)=>{
@@ -348,7 +348,7 @@ routes.b=(id)=>{
   <div class="sec" style="padding-top:12px">${b.i?`<div class="card" style="padding:14px;font-size:15px;line-height:1.55">${esc(b.i)}</div>`:''}
   ${b.c.map(([t,d])=>{const w=t==='Ескерту';return `<div class="card bc ${w?'warn':''}"><span class="ic">${w?I.warn:I.spark}</span><div><b>${esc(t)}</b><p>${esc(d)}</p></div></div>`}).join('')}
   <p class="src">${esc(b.r)}</p>
-  <button class="btn btn-g" style="margin-top:16px" onclick="addCart('${id}',1)">Себетке қосу · ${fmt(p.p)}</button></div>
+  <button class="btn btn-g" style="margin-top:16px" onclick="addCart('${id}',1,true)">Себетке қосу · ${fmt(p.p)}</button></div>
   </div></section>`;
 };
 
