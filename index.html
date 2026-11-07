@@ -547,6 +547,7 @@ routes.profile=()=>`<section class="view">${topbar('Профиль')}<div class=
 <button class="pr-row" onclick="toast('Карта тіркеу жақында қосылады')"><span class="ic">${I.card}</span><span>Төлем карталары</span>${I.chev}</button>
 <button class="pr-row" onclick="toast('Қазақша · Русский — жақында')"><span class="ic">🌐</span><span>Тіл</span><small>Қазақша</small></button>
 <button class="pr-row" onclick="toast('Әр тапсырысқа шағын сыйлық беріледі')"><span class="ic">${I.gift}</span><span>Сыйлықтар</span>${I.chev}</button>
+<button class="pr-row" onclick="window.open('https://ereke-pay.vercel.app','_blank','noopener')"><span class="ic">${I.store||'🏪'}</span><span>Сатушы кабинеті · ERKE PAY</span>${I.chev}</button>
 </div>
 <div class="card" style="margin-top:12px;padding:14px;font-size:13.5px;color:var(--mut);line-height:1.5"><b style="color:var(--ink)">EREKE M&D</b> — табиғи сүт өнімдері мен қазақы тағамдардың онлайн дүкені. Ұзынағаш бойынша үйге дейін жеткіземіз.</div>
 <button class="btn btn-l" style="margin-top:12px" onclick="if(confirm('Себет, таңдаулылар мен тапсырыстар тазартылсын ба?')){S.cart={};S.fav=[];S.orders=[];S.seen=[];save();render()}">Демо деректерін тазарту</button>
