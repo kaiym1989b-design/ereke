@@ -200,6 +200,8 @@ button{border:0;background:none;cursor:pointer}
 .steps{display:flex;gap:4px;margin-top:12px}
 .steps i{flex:1;height:4px;border-radius:2px;background:var(--line)}
 .steps i.on{background:var(--g)}
+.stl{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--mut)}.stl span.on{color:var(--g);font-weight:700}
+.offl{margin-top:4px;font-size:11px;font-weight:700;color:#DC2626}
 /* profile */
 .pf{display:flex;align-items:center;gap:14px;padding:16px}
 .pf .av{width:60px;height:60px;border-radius:50%;background:var(--gl);color:var(--g);display:grid;place-items:center;font-size:24px;font-weight:800}
@@ -215,6 +217,8 @@ button{border:0;background:none;cursor:pointer}
 </head>
 <body>
 <div class="app" id="app"><div class="demo">ДЕМО</div><div id="root"></div><div class="toast" id="toast"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
 <script src="data.js"></script>
 <script src="benefits.js"></script>
 <script>
@@ -225,7 +229,7 @@ const P=Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
 const C=Object.fromEntries(CATS.map(c=>[c.id,c]));
 const catId=n=>CATS.find(c=>c.n===n).id;
 const desc=p=>p.d?p.d+' EREKE M&D дүкенінен сапалы өнім, Ұзынағаш бойынша үйге дейін жеткіземіз.':p.n+' — EREKE M&D дүкенінен сапалы өнім. Ұзынағаш бойынша үйге дейін жеткіземіз.';
-const img=p=>`img/p/${p.id}.webp`;
+const img=p=>p.img||`img/p/${p.id}.webp`;
 
 /* state */
 const LS={get(k,d){try{return JSON.parse(localStorage.getItem('ereke-'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('ereke-'+k,JSON.stringify(v))}catch(e){}}};
@@ -277,15 +281,15 @@ function nav(active){
 function topbar(title,right=''){return `<div class="top"><button class="ib" onclick="back()" aria-label="Артқа">${I.back}</button><h1>${title}</h1>${right||'<span style="width:40px"></span>'}</div>`}
 function pcard(p){
   const f=S.fav.includes(p.id);
-  return `<div class="pc"><button style="display:block;width:100%;text-align:left" onclick="go('#/p/${p.id}')"><img src="${img(p)}" alt="${esc(p.n)}" loading="lazy"><div class="b"><div class="n">${esc(p.n)}</div><div class="s">${esc(p.s)}</div><div class="row"><span class="p">${fmt(p.p)}</span><span></span></div></div></button>
+  return `<div class="pc"><button style="display:block;width:100%;text-align:left" onclick="go('#/p/${p.id}')"><img src="${img(p)}" alt="${esc(p.n)}" loading="lazy"><div class="b"><div class="n">${esc(p.n)}</div><div class="s">${esc(p.s)}</div><div class="row"><span class="p">${fmt(p.p)}</span><span></span></div>${p.off?'<div class="offl">Қолжетімсіз</div>':''}</div></button>
   <button class="fav ${f?'on':''}" onclick="togFav('${p.id}',this)" aria-label="Таңдаулы">${f?I.heartF:I.heart}</button>
-  <button class="add" style="position:absolute;right:10px;bottom:10px" onclick="addCart('${p.id}',1)" aria-label="Себетке қосу">${I.plus}</button></div>`;
+  ${p.off?'':`<button class="add" style="position:absolute;right:10px;bottom:10px" onclick="addCart('${p.id}',1)" aria-label="Себетке қосу">${I.plus}</button>`}</div>`;
 }
 function li(p){return `<button class="li" onclick="go('#/p/${p.id}')"><img src="${img(p)}" alt="" loading="lazy"><div class="t"><b>${esc(p.n)}</b><small>${esc(p.s)}</small></div><span class="pr">${fmt(p.p)}</span><span class="chev">${I.chev}</span></button>`}
 
 /* actions */
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2000)}
-function addCart(id,q,toCart){S.cart[id]=(S.cart[id]||0)+q;save();toast(`${P[id].n} себетке қосылды`);if(toCart){go('#/cart');return}const b=document.querySelector('.nav .badge');if(b)b.textContent=cartCount();else render(true)}
+function addCart(id,q,toCart){if(P[id]&&P[id].off){toast('Бұл тауар қазір қолжетімсіз');return}S.cart[id]=(S.cart[id]||0)+q;save();toast(`${P[id].n} себетке қосылды`);if(toCart){go('#/cart');return}const b=document.querySelector('.nav .badge');if(b)b.textContent=cartCount();else render(true)}
 function setQty(id,q){if(q<=0)delete S.cart[id];else S.cart[id]=q;save();render(true)}
 function togFav(id,el){const i=S.fav.indexOf(id);i<0?S.fav.push(id):S.fav.splice(i,1);save();
   if(el){const on=S.fav.includes(id);el.classList.toggle('on',on);el.innerHTML=on?I.heartF:I.heart}
@@ -338,7 +342,7 @@ routes.p=(id)=>{
   ${b?`<button class="benef" onclick="go('#/b/${id}')"><span class="ic">${I.book}</span><span style="flex:1"><b>${esc(p.n)} пайдасы</b><small>Құрамы, пайдасы және ескертулер</small></span><span style="color:var(--g)">${I.chev}</span></button>`:''}
   <div class="feats"><div>${I.leaf}Табиғи өнім</div><div>${I.shield}Сапа кепілі</div><div>${I.truck}Жылдам жеткізу</div></div>
   </div></div>
-  <div class="buybar"><div class="qty"><button onclick="pq=Math.max(1,pq-1);$('#pqv').textContent=pq" aria-label="Азайту">−</button><span id="pqv">${pq}</span><button onclick="pq++;$('#pqv').textContent=pq" aria-label="Көбейту">+</button></div><button class="btn btn-g" style="flex:1" onclick="addCart('${id}',pq,true);pq=1">Себетке қосу</button></div></section>`;
+  <div class="buybar"><div class="qty"><button onclick="pq=Math.max(1,pq-1);$('#pqv').textContent=pq" aria-label="Азайту">−</button><span id="pqv">${pq}</span><button onclick="pq++;$('#pqv').textContent=pq" aria-label="Көбейту">+</button></div>${p.off?'<button class="btn" style="flex:1;background:#E5E7EB;color:#6B7280" disabled>Қазір қолжетімсіз</button>':`<button class="btn btn-g" style="flex:1" onclick="addCart('${id}',pq,true);pq=1">Себетке қосу</button>`}</div></section>`;
 };
 
 routes.b=(id)=>{
@@ -477,6 +481,7 @@ routes.checkout=()=>{
     ?`<button class="addr" onclick="go('#/post')"><span class="oi">${I.pin}</span><span class="t">${p.ok?`<b>${esc(postAddr(p))}</b><small>${esc([p.obl,p.aud!=='—'?p.aud:''].filter(Boolean).join(', '))} · ${esc(p.name)} · ${esc(p.phone)}</small>`:`<b>Қазпошта мекенжайын толтырыңыз</b><small>Облыс, аудан, ауыл, көше, индекс, алушы</small>`}</span>${I.chev}</button>`
     :`<button class="addr" onclick="go('#/taxi')"><span class="oi">${I.pin}</span><span class="t">${k.addr&&tn?`<b>${esc(k.addr)}</b><small>${esc(tn[1])}${(t.app==='own'||t.app==='local')&&t.dphone?' · '+esc(t.dname||'')+' '+esc(t.dphone):''}</small>`:`<b>Такси мен мекенжайды таңдаңыз</b><small>Qajet Taxi, Yandex Go, inDrive және т.б.</small>`}</span>${I.chev}</button>`;
   return `<section class="view">${topbar('Тапсырыс беру')}<div class="scroll"><div class="sec" style="padding-top:0">
+  <div class="card blk"><h3>Байланыс</h3>${fld('Аты-жөніңіз','cname',k.cname??(p.name||''),'Мысалы: Айгүл',`autocomplete="name" oninput="S.ck.cname=this.value;LS.set('ck',S.ck)"`)}${fld('Телефон нөміріңіз','cphone',k.cphone??(p.phone||''),'+7 (7__) ___-__-__',`type="tel" inputmode="tel" oninput="this.value=phoneFmt(this.value);S.ck.cphone=this.value;LS.set('ck',S.ck)"`)}</div>
   <div class="card blk"><h3>Жеткізу мекенжайы</h3>${addrBlock}</div>
   <div class="card blk"><h3>Жеткізу тәсілі</h3>${Object.entries(DEL).map(([key,o])=>`<button class="opt ${k.del===key?'on':''}" onclick="S.ck.del='${key}';LS.set('ck',S.ck);go('${key==='post'?'#/post':'#/taxi'}')"><span class="oi">${o.i}</span><span class="t"><b>${o.n}</b><small>${o.s}</small><em>${o.pt}</em></span><span class="radio"></span></button>`).join('')}</div>
   <div class="card blk"><h3>Жеткізу уақыты</h3>${[['today','Бүгін, 18:00–21:00'],['tomorrow','Ертең, 10:00–14:00']].map(([key,l])=>`<button class="tline ${k.time===key?'on':''}" onclick="S.ck.time='${key}';render(true)"><span class="radio"></span>${l}</button>`).join('')}</div>
@@ -484,24 +489,39 @@ routes.checkout=()=>{
   <div class="card sum" style="margin-top:12px"><div class="row"><span>Тауарлар</span><span>${fmt(cartSum())}</span></div><div class="row"><span>Жеткізу (${d.n})</span><span>${d.p?fmt(d.p):d.pt}</span></div><div class="row tot"><span>Барлығы</span><span>${fmt(cartSum()+d.p)}</span></div></div>
   </div></div><div class="buybar"><button class="btn btn-g" onclick="placeOrder()">Тапсырысты растау</button></div></section>`;
 };
-function placeOrder(){
+async function placeOrder(){
   const k=S.ck;const d=DEL[k.del]||DEL.post;
   if(k.del==='post'&&!k.post.ok){toast('Қазпошта мекенжайын толтырыңыз');go('#/post');return}
   if(k.del!=='post'&&(!k.taxi.app||!k.addr.trim())){toast('Такси мен мекенжайды таңдаңыз');go('#/taxi');return}
   if(k.pay==='visa'&&!k.card){go('#/card');return}
+  const cname=(k.cname??k.post.name??'').trim(),cphone=(k.cphone??k.post.phone??'');
+  if(!cname){toast('Аты-жөніңізді жазыңыз');$('#cname')&&$('#cname').focus();return}
+  if(!phoneOk(cphone)){toast('Телефон нөміріңізді толық жазыңыз');$('#cphone')&&$('#cphone').focus();return}
+  const items=Object.entries(S.cart).filter(([id])=>P[id]).map(([slug,qty])=>({slug,qty}));
+  const off=items.find(i=>P[i.slug].off);if(off){toast(P[off.slug].n+' қазір қолжетімсіз, себеттен алып тастаңыз');return}
+  if(!SB){toast('Серверге қосылу мүмкін болмады');return}
   const addr=k.del==='post'?postAddr(k.post):k.addr;
-  S.orders.unshift({no:Math.floor(100000+Math.random()*899999),t:Date.now(),items:{...S.cart},sum:cartSum()+d.p,del:d.n,addr,pay:PAY.find(x=>x[0]===k.pay)[1]});
-  S.cart={};k.rcode=null;save();LS.set('ck',k);go('#/done');
+  const tx=k.taxi.app&&TAXI.find(x=>x[0]===k.taxi.app);
+  const details=k.del==='post'?{type:'kazpost',obl:k.post.obl,aud:k.post.aud,loc:k.post.loc,street:k.post.street,house:k.post.house,idx:k.post.idx,recipient:k.post.name,recipient_phone:k.post.phone}:{type:'taxi',app:tx?tx[1]:'',driver_name:k.taxi.dname||'',driver_phone:k.taxi.dphone||''};
+  const btn=document.querySelector('.buybar .btn');if(btn){btn.disabled=true;btn.textContent='Жіберілуде...'}
+  const {data,error}=await SB.rpc('place_order',{p_customer_key:CKEY,p_store_slug:CFG.store,p_items:items,p_customer_name:cname,p_customer_phone:cphone,p_delivery_method:k.del,p_delivery_address:addr,p_delivery_details:details,p_delivery_time:k.time==='today'?'Бүгін, 18:00–21:00':'Ертең, 10:00–14:00',p_payment_method:PAY.find(x=>x[0]===k.pay)[1]});
+  if(error){if(btn){btn.disabled=false;btn.textContent='Тапсырысты растау'}toast('Қате: '+(error.message||'жіберілмеді'));return}
+  S.lastNo=data.order_number;LS.set('lastNo',S.lastNo);S.cart={};k.rcode=null;save();LS.set('ck',k);CLOUD.orders=null;fetchOrders();go('#/done');
 }
 
-routes.done=()=>`<section class="view"><div class="done"><div class="ok">${I.check}</div><h2>Тапсырыс қабылданды!</h2><p>Тапсырысыңыз жақын арада өңделеді.<br>Рақмет!</p><div class="btns"><button class="btn btn-l" onclick="go('#/orders')">Тапсырысты бақылау</button><button class="btn btn-g" onclick="go('#/home')">Басты бетке қайту</button></div></div></section>`;
+routes.done=()=>`<section class="view"><div class="done"><div class="ok">${I.check}</div><h2>Тапсырыс жіберілді!</h2><p>${S.lastNo?`<b style="color:var(--ink)">№${esc(S.lastNo)}</b><br>`:''}Сатушы тапсырысыңызды қазір көреді.<br>Статусы «Тапсырыстарым» бетінде жаңарып отырады.</p><div class="btns"><button class="btn btn-l" onclick="go('#/orders')">Тапсырысты бақылау</button><button class="btn btn-g" onclick="go('#/home')">Басты бетке қайту</button></div></div></section>`;
 
+const OST={NEW:['Жаңа · сатушы қарап жатыр','#2563EB','#E8F0FE',0],ACCEPTED:['🟡 Қабылданды','#B7791F','#FEF6E0',1],PREPARING:['🟠 Дайындалуда','#EA580C','#FFEDE2',2],READY:['🟢 Дайын','#16A34A','#E3F7EA',3],COMPLETED:['✓ Аяқталды','#475569','#EEF1F4',4],CANCELLED:['✕ Бас тартылды','#DC2626','#FDE8E8',-1]};
 routes.orders=()=>{
-  if(!S.orders.length)return `<section class="view">${topbar('Тапсырыстарым')}<div class="scroll"><div class="empty"><div class="ei">${I.orders}</div><b>Тапсырыс әлі жоқ</b>Алғашқы тапсырысыңызды беріңіз</div></div>${nav('orders')}</section>`;
-  return `<section class="view">${topbar('Тапсырыстарым')}<div class="scroll"><div class="sec" style="padding-top:0">${S.orders.map(o=>{const ids=Object.keys(o.items).filter(id=>P[id]);const step=Math.min(3,1+Math.floor((Date.now()-o.t)/60000));const st=['Қабылданды','Жиналуда','Жолда'][step-1];
-  return `<div class="card ord"><div class="h"><b>№ ${o.no}</b><span class="st">${st}</span></div><div style="font-size:12.5px;color:var(--mut);margin-top:4px">${new Date(o.t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${esc(o.del)} · ${esc(o.pay)}</div>
-  <div class="th">${ids.slice(0,6).map(id=>`<img src="${img(P[id])}" alt="">`).join('')}</div><div class="steps">${[1,2,3,4].map(i=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div>
-  <div class="f"><span style="color:var(--mut)">${esc(o.addr)}</span><b style="color:var(--g)">${fmt(o.sum)}</b></div></div>`}).join('')}</div></div>${nav('orders')}</section>`;
+  if(CLOUD.orders===null){fetchOrders();return `<section class="view">${topbar('Тапсырыстарым')}<div class="scroll"><div class="empty"><b>Жүктелуде...</b></div></div>${nav('orders')}</section>`}
+  const list=CLOUD.orders;
+  if(!list.length)return `<section class="view">${topbar('Тапсырыстарым')}<div class="scroll"><div class="empty"><div class="ei">${I.orders}</div><b>Тапсырыс әлі жоқ</b>Алғашқы тапсырысыңызды беріңіз</div></div>${nav('orders')}</section>`;
+  return `<section class="view">${topbar('Тапсырыстарым')}<div class="scroll"><div class="sec" style="padding-top:0"><p class="hint" style="margin:4px 4px 0">Статус сатушы өзгерткен сәтте осында өзі жаңарады.</p>${list.map(o=>{const st=OST[o.status]||OST.NEW;const step=st[3];
+  return `<div class="card ord"><div class="h"><b>№${esc(o.order_number)}</b><span class="st" style="color:${st[1]};background:${st[2]}">${st[0]}</span></div><div style="font-size:12.5px;color:var(--mut);margin-top:4px">${new Date(o.created_at).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${esc(o.payment_method||'')}</div>
+  <div class="th">${o.items.slice(0,6).map(i=>P[i.slug]?`<img src="${img(P[i.slug])}" alt="" title="${esc(i.name)} × ${i.qty}">`:'').join('')}</div>
+  <div style="font-size:13px;margin-top:8px">${o.items.map(i=>esc(i.name)+' × '+i.qty).join(', ')}</div>
+  ${step>=0?`<div class="steps">${[0,1,2,3,4].map(i=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div><div class="stl">${['Жаңа','Қабылданды','Дайындалуда','Дайын','Аяқталды'].map((l,i)=>`<span class="${i<=step?'on':''}">${l}</span>`).join('')}</div>`:`<div class="hint" style="color:#DC2626">Тапсырыстан бас тартылды${o.cancel_reason?': '+esc(o.cancel_reason):''}</div>`}
+  <div class="f"><span style="color:var(--mut)">${esc(o.delivery_address||'')}</span><b style="color:var(--g)">${fmt(o.total)}</b></div></div>`}).join('')}</div></div>${nav('orders')}</section>`;
 };
 
 routes.fav=()=>{
@@ -521,7 +541,7 @@ function doSearch(){
 routes.profile=()=>`<section class="view">${topbar('Профиль')}<div class="scroll"><div class="sec" style="padding-top:0">
 <div class="card pf"><div class="av">Т</div><div><b style="font-size:17px">Тұтынушы</b><div style="color:var(--mut);font-size:13px;margin-top:2px">Кіру демо нұсқада қосылмаған</div></div></div>
 <div class="card" style="margin-top:12px">
-<button class="pr-row" onclick="go('#/orders')"><span class="ic">${I.orders}</span><span>Тапсырыстарым</span><small>${S.orders.length}</small></button>
+<button class="pr-row" onclick="go('#/orders')"><span class="ic">${I.orders}</span><span>Тапсырыстарым</span><small>${CLOUD.orders?CLOUD.orders.length:''}</small></button>
 <button class="pr-row" onclick="go('#/fav')"><span class="ic">${I.heart}</span><span>Таңдаулылар</span><small>${S.fav.length}</small></button>
 <button class="pr-row" onclick="toast('Мекенжайлар жақында қосылады')"><span class="ic">${I.pin}</span><span>Мекенжайларым</span>${I.chev}</button>
 <button class="pr-row" onclick="toast('Карта тіркеу жақында қосылады')"><span class="ic">${I.card}</span><span>Төлем карталары</span>${I.chev}</button>
@@ -531,6 +551,24 @@ routes.profile=()=>`<section class="view">${topbar('Профиль')}<div class=
 <div class="card" style="margin-top:12px;padding:14px;font-size:13.5px;color:var(--mut);line-height:1.5"><b style="color:var(--ink)">EREKE M&D</b> — табиғи сүт өнімдері мен қазақы тағамдардың онлайн дүкені. Ұзынағаш бойынша үйге дейін жеткіземіз.</div>
 <button class="btn btn-l" style="margin-top:12px" onclick="if(confirm('Себет, таңдаулылар мен тапсырыстар тазартылсын ба?')){S.cart={};S.fav=[];S.orders=[];S.seen=[];save();render()}">Демо деректерін тазарту</button>
 </div></div>${nav('profile')}</section>`;
+
+/* ERKE cloud — Supabase (ERKE PAY-мен ортақ) */
+const CFG=window.ERKE_CFG||{};
+const SB=(window.supabase&&CFG.url)?window.supabase.createClient(CFG.url,CFG.key,{auth:{persistSession:false,autoRefreshToken:false}}):null;
+const CKEY=(()=>{let k=LS.get('ckey',null);if(!k){k=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)});LS.set('ckey',k)}return k})();
+const CLOUD={orders:null,sig:''};S.lastNo=LS.get('lastNo','');
+function applyProducts(rows){rows.forEach(r=>{if(!r||!r.slug)return;let p=P[r.slug];if(!p){if(!CATS.find(c=>c.n===r.category))return;p={id:r.slug,n:r.name,c:r.category,s:r.size||'',p:r.price,d:r.description||'',img:r.image_url||''};PRODUCTS.push(p);P[r.slug]=p}p.p=r.price;p.n=r.name;if(r.size)p.s=r.size;p.off=!r.is_available;if(r.description)p.d=r.description;if(r.image_url&&!/ereke\.vercel\.app\/img\/p\//.test(r.image_url))p.img=r.image_url})}
+const busy=()=>{const a=document.activeElement;return a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')};
+async function syncProducts(){if(!SB)return;const {data,error}=await SB.from('products').select('slug,name,category,size,price,description,image_url,is_available');if(error||!data)return;applyProducts(data);if(!busy())render(true)}
+let fetching=false;
+async function fetchOrders(){if(!SB||fetching)return;fetching=true;try{const {data,error}=await SB.rpc('get_customer_orders',{p_customer_key:CKEY});if(error)return;const list=data||[];
+  const sig=JSON.stringify(list.map(o=>[o.id,o.status]));
+  if(CLOUD.orders&&sig!==CLOUD.sig){list.forEach(o=>{const old=CLOUD.orders.find(x=>x.id===o.id);if(old&&old.status!==o.status)toast('№'+o.order_number+': '+(OST[o.status]||OST.NEW)[0])})}
+  const changed=sig!==CLOUD.sig||CLOUD.orders===null;CLOUD.orders=list;CLOUD.sig=sig;
+  if(changed&&/^#\/(orders|profile)/.test(location.hash)&&!busy())render(true)}finally{fetching=false}}
+if(SB){syncProducts();fetchOrders();
+  try{SB.channel('erke-products').on('postgres_changes',{event:'*',schema:'public',table:'products'},pl=>{applyProducts([pl.new]);if(!busy())render(true)}).subscribe()}catch(e){}
+  setInterval(()=>{if(/^#\/(orders|done|profile)/.test(location.hash)||document.visibilityState==='visible')fetchOrders()},4000)}
 
 function render(keepScroll){
   const sc=document.querySelector('.scroll');const y=keepScroll&&sc?sc.scrollTop:0;

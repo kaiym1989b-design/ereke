@@ -6,3 +6,9 @@
 - `data.js` — санаттар мен тауарлар (атауы, көлемі, бағасы)
 - `benefits.js` — «Пайдасы» беттерінің мәтіндері
 - `img/` — суреттер
+
+## ERKE экожүйесі (Supabase)
+- `config.js` — ортақ Supabase адресі мен ашық (publishable) кілті
+- `supabase/migrations/` — дерекқор құрылымы, RLS, RPC функциялар, 69 тауар
+- `erke-pay/` — сатушы кабинеті ERKE PAY (бөлек Vercel жобасы: ereke-pay, root directory = `erke-pay`)
+- Клиент тапсырысы `place_order()` арқылы жазылады, статусты сатушы `set_order_status()` арқылы өзгертеді
