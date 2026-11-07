@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ERKE PAY — сатушы кабинеті</title>
 <meta name="theme-color" content="#1B5E20">
+<link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -45,6 +46,7 @@ svg{flex:none}
 }
 .logo{display:flex;align-items:center;gap:10px}
 .logo .m{width:38px;height:38px;border-radius:11px;background:var(--gold);color:var(--b9);display:grid;place-items:center;font-weight:800;font-size:21px}
+.logo img.m{border-radius:50%!important;object-fit:cover;background:#000;box-shadow:0 0 0 2px rgba(201,162,39,.85);flex:none}
 .logo b{display:block;font-weight:800;font-size:19px;letter-spacing:.04em;line-height:1}.logo small{display:block;color:var(--gold);font-weight:700;font-size:11px;letter-spacing:.3em;margin-top:3px}
 /* ui */
 .card{background:var(--card);border-radius:18px;padding:16px}
@@ -150,7 +152,7 @@ textarea.inp{height:auto;min-height:90px;padding:12px 14px;resize:vertical}
 #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #notif{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:50%;transform:translateX(-50%) translateY(-140%);width:min(380px,calc(100vw - 24px));background:var(--card);border-radius:20px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.25);z-index:70;transition:.35s;display:flex;flex-direction:column;gap:10px}
-#notif.on{transform:translateX(-50%) translateY(0)}
+#notif{visibility:hidden}#notif.on{transform:translateX(-50%) translateY(0);visibility:visible}
 .modal{position:fixed;inset:0;background:rgba(10,20,14,.45);z-index:80;display:flex;align-items:flex-end;justify-content:center}
 .modal .sheet{background:var(--card);width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:20px 16px calc(env(safe-area-inset-bottom) + 16px);display:flex;flex-direction:column;gap:12px}
 @media (min-width:900px){.modal{align-items:center}.modal .sheet{border-radius:22px}}
@@ -267,15 +269,15 @@ function navbar(active){const newC=A.orders.filter(o=>o.status==='NEW').length;
   return `<nav class="nav">${items.map(([k,l,h,p])=>`<button class="${active===k?'on':''}" onclick="go('${h}')"><span class="pill">${ic(p)}${k==='orders'&&newC?`<span class="cnt">${newC}</span>`:''}</span>${l}</button>`).join('')}</nav>`}
 function sidebar(active){const newC=A.orders.filter(o=>o.status==='NEW').length;
   const items=[['home','Басты бет','#/home',I.home],['store','Магазин','#/store',I.store],['orders','Заказдар','#/orders',I.box],['products','Тауарлар','#/products',I.tag],['staff','Қызметкерлер','#/staff',I.users],['report','Есеп','#/report',I.chart],['settings','Баптаулар','#/settings',I.gear]];
-  return `<aside class="side"><div class="logo" style="padding:0 8px 20px"><span class="m">E</span><div><b>ERKE</b><small>PAY</small></div></div>
+  return `<aside class="side"><div class="logo" style="padding:0 8px 20px"><img class="m" src="logo.png" alt="EREKE"><div><b>ERKE</b><small>PAY</small></div></div>
   ${items.map(([k,l,h,p])=>`<button class="it ${active===k?'on':''}" onclick="go('${h}')">${ic(p,20)}<span>${l}</span>${k==='orders'&&newC?`<span class="n">${newC}</span>`:''}</button>`).join('')}
-  <div style="flex:1"></div><button class="it" onclick="go('#/profile')" style="opacity:1;background:rgba(255,255,255,.08);height:auto;padding:12px"><span class="logo"><span class="m" style="width:34px;height:34px;font-size:16px">${esc((A.store?.name||'E')[0])}</span></span><span style="flex:1;min-width:0"><b style="display:block;font-size:13.5px">${esc(A.store?.name||'')}</b><small style="opacity:.7;font-size:11.5px">${ROLES[A.role]||''} · ${esc(A.profile?.full_name||A.user?.email||'')}</small></span></button></aside>`}
+  <div style="flex:1"></div><button class="it" onclick="go('#/profile')" style="opacity:1;background:rgba(255,255,255,.08);height:auto;padding:12px"><span class="logo"><img class="m" src="logo.png" alt="EREKE" style="width:34px;height:34px;font-size:16px"></span><span style="flex:1;min-width:0"><b style="display:block;font-size:13.5px">${esc(A.store?.name||'')}</b><small style="opacity:.7;font-size:11.5px">${ROLES[A.role]||''} · ${esc(A.profile?.full_name||A.user?.email||'')}</small></span></button></aside>`}
 function page(active,title,body,o={}){
   return `<div class="shell">${sidebar(active)}<main class="main">${o.hero||''}<div class="top" ${o.hero?'data-d="1"':''}>${o.back?`<button class="ib" onclick="back('${o.back}')">${ic(I.back,20,2.2)}</button>`:''}<h1>${title}</h1>${o.right||''}</div><div class="wrap">${body}</div>${o.bar||''}</main></div>${o.bar?'':navbar(active)}`}
 
 /* ---------- auth screens ---------- */
 let authMode='login',authErr='',authInfo='';
-routes.login=()=>`<div class="auth"><div class="hd"><div class="logo"><span class="m" style="width:48px;height:48px;font-size:26px;border-radius:14px">E</span><div><b style="font-size:24px">ERKE</b><small>PAY</small></div></div><div><h1>Сатушы кабинеті</h1><p>ERKE MD-ден түскен заказдарды қабылдап, дүкеніңізді бір жерден басқарыңыз.</p></div></div>
+routes.login=()=>`<div class="auth"><div class="hd"><div class="logo"><img class="m" src="logo.png" alt="EREKE" style="width:72px;height:72px"><div><b style="font-size:24px">ERKE</b><small>PAY</small></div></div><div><h1>Сатушы кабинеті</h1><p>ERKE MD-ден түскен заказдарды қабылдап, дүкеніңізді бір жерден басқарыңыз.</p></div></div>
 <form class="bd" onsubmit="event.preventDefault();doAuth()">
 <h2 style="font-size:22px">${authMode==='login'?'Кіру':'Тіркелу'}</h2>
 ${authErr?`<div class="err">${esc(authErr)}</div>`:''}${authInfo?`<div class="note">${authInfo}</div>`:''}
@@ -293,7 +295,7 @@ async function doAuth(){const email=$('#aemail').value.trim(),password=$('#apass
     const {error}=await SB.auth.signInWithPassword({email,password});if(error)throw error;await afterLogin()}
   catch(e){authErr=/Invalid login/i.test(e.message)?'Email немесе құпиясөз қате.':/not confirmed/i.test(e.message)?'Email әлі расталмаған. Поштаңыздағы хатты ашып, сілтемені басыңыз.':/registered/i.test(e.message)?'Бұл email тіркелген. «Кіру» бетінен кіріңіз.':e.message;b.disabled=false;render()}}
 async function afterLogin(){await loadSession();A.loaded=false;$('#app').innerHTML='<div class="empty" style="padding-top:40vh"><b>Жүктелуде...</b></div>';await loadMe();go('#/home')}
-routes.nostore=()=>`<div class="auth"><div class="hd"><div class="logo"><span class="m">E</span><div><b>ERKE</b><small>PAY</small></div></div><div><h1>Дүкен табылмады</h1><p>${esc(A.user?.email||'')} аккаунтына әзірге бірде-бір дүкен байланбаған.</p></div></div>
+routes.nostore=()=>`<div class="auth"><div class="hd"><div class="logo"><img class="m" src="logo.png" alt="EREKE"><div><b>ERKE</b><small>PAY</small></div></div><div><h1>Дүкен табылмады</h1><p>${esc(A.user?.email||'')} аккаунтына әзірге бірде-бір дүкен байланбаған.</p></div></div>
 <div class="bd"><div class="note">Дүкен иесі сізді «Қызметкерлер» бөлімінен осы email арқылы шақыруы керек. Шақыру келген соң «Қайта тексеру» батырмасын басыңыз.</div>
 <button class="btn w" onclick="afterLogin()">Қайта тексеру</button><button class="btn ghost w" onclick="logout()">Шығу</button></div></div>`;
 
@@ -307,7 +309,7 @@ function orderCard(o,compact){const nx=NEXT[o.status];
   ${nx&&can.status()&&!compact?`<div class="acts" onclick="event.stopPropagation()">${['NEW','ACCEPTED'].includes(o.status)?`<button class="btn danger s" style="flex:0 0 auto" onclick="cancelOrder('${o.id}')">Бас тарту</button>`:''}<button class="btn s" onclick="setStatus('${o.id}','${nx[0]}')">${ic(I[nx[2]],17,2.2)}${nx[1]}</button></div>`:''}</div>`}
 routes.home=()=>{const s=todayStats();const news=A.orders.filter(o=>o.status==='NEW');
   const _d=new Date();const day=['Жексенбі','Дүйсенбі','Сейсенбі','Сәрсенбі','Бейсенбі','Жұма','Сенбі'][_d.getDay()]+', '+_d.getDate()+' '+['қаңтар','ақпан','наурыз','сәуір','мамыр','маусым','шілде','тамыз','қыркүйек','қазан','қараша','желтоқсан'][_d.getMonth()]+(A.store.open_time?' · '+(isOpen()?'Дүкен ашық':'Дүкен жабық')+', '+A.store.open_time.slice(0,5)+'–'+(A.store.close_time||'').slice(0,5):'');
-  const hero=`<div class="hero"><div class="row"><div class="logo"><span class="m">E</span><div><b>ERKE</b><small>PAY</small></div></div><span class="sp"></span><button class="ib" style="background:rgba(255,255,255,.14);color:#fff" onclick="go('#/orders')">${ic(I.bell,22)}${news.length?`<span class="cnt" style="top:-2px;right:-2px">${news.length}</span>`:''}</button></div>
+  const hero=`<div class="hero"><div class="row"><div class="logo"><img class="m" src="logo.png" alt="EREKE"><div><b>ERKE</b><small>PAY</small></div></div><span class="sp"></span><button class="ib" style="background:rgba(255,255,255,.14);color:#fff" onclick="go('#/orders')">${ic(I.bell,22)}${news.length?`<span class="cnt" style="top:-2px;right:-2px">${news.length}</span>`:''}</button></div>
   <div><div style="font-size:24px;font-weight:800">Сәлем, ${esc((A.profile?.full_name||'').split(' ')[0]||'сатушы')}!</div><div class="sm" style="opacity:.78;margin-top:4px">${esc(day)}</div></div>
   <span class="chipw">${ic(I.store,18)} ${esc(A.store.name)} · ${esc(ROLES[A.role])}</span>
   <div class="sale"><div class="row"><span class="sp sm mut" style="font-weight:500">Бүгінгі сатылым</span><span id="live" class="live ${A.live?'':'off'}">${A.live?'Тікелей':'Қосылуда...'}</span></div><div class="v">${fmt(s.sales)}</div><div class="row xs mut" style="gap:16px">${ic(I.box,15)} ${s.n} заказ <span>${ic(I.chart,15)} Орташа чек ${fmt(s.avg)}</span></div></div></div>`;
@@ -398,7 +400,7 @@ async function reallyDel(id){const {error}=await SB.from('products').delete().eq
 /* ---------- store hub ---------- */
 routes.store=()=>{const s=todayStats();const off=A.products.filter(p=>!p.is_available).length;const open=isOpen();
   const tiles=[[I.box,'Заказдар',(s.c.NEW?s.c.NEW+' жаңа':'Жаңа заказ жоқ'),'#/orders',1],[I.tag,'Тауарлар',A.products.length+' тауар','#/products',1],[I.warehouse,'Қойма',off?off+' тауар қолжетімсіз':'Барлығы сатылымда','#/products',1],[I.info,'Дүкен туралы','Атауы, БСН, байланыс','#/settings',can.settings()],[I.clock,'Жұмыс уақыты',(A.store.open_time||'').slice(0,5)+'–'+(A.store.close_time||'').slice(0,5),'#/settings',can.settings()],[I.users,'Қызметкерлер','Рөлдер мен шақыру','#/staff',1],[I.chart,'Есеп','Бүгін '+fmt(s.sales),'#/report',can.reports()],[I.gear,'Баптаулар','Хабарлама, дыбыс','#/profile',1]];
-  const body=`<div class="card row" style="background:var(--b7);color:#fff;padding:16px"><span class="logo"><span class="m" style="width:56px;height:56px;font-size:28px;border-radius:16px">${esc(A.store.name[0])}</span></span><div class="sp"><b style="font-size:18px">${esc(A.store.name)}</b><div class="sm" style="opacity:.78">${esc([A.store.city,'Табиғи өнімдер'].filter(Boolean).join(' · '))}</div><span class="badge" style="margin-top:6px;background:${open?'var(--gold)':'rgba(255,255,255,.2)'};color:${open?'var(--b9)':'#fff'}">${open?'Ашық':'Жабық'}</span></div></div>
+  const body=`<div class="card row" style="background:var(--b7);color:#fff;padding:16px"><span class="logo"><img class="m" src="logo.png" alt="EREKE" style="width:56px;height:56px;font-size:28px;border-radius:16px"></span><div class="sp"><b style="font-size:18px">${esc(A.store.name)}</b><div class="sm" style="opacity:.78">${esc([A.store.city,'Табиғи өнімдер'].filter(Boolean).join(' · '))}</div><span class="badge" style="margin-top:6px;background:${open?'var(--gold)':'rgba(255,255,255,.2)'};color:${open?'var(--b9)':'#fff'}">${open?'Ашық':'Жабық'}</span></div></div>
   <div class="tiles">${tiles.filter(t=>t[4]).map(([p,l,s,h])=>`<button class="tile" onclick="go('${h}')"><span class="ic">${ic(p,20)}</span><b>${l}</b><span>${esc(s)}</span></button>`).join('')}</div>`;
   return page('store','Магазин',body)};
 function isOpen(){const n=new Date();const m=n.getHours()*60+n.getMinutes();const t=s=>{const [h,mi]=(s||'00:00').split(':').map(Number);return h*60+mi};return A.store.is_active&&m>=t(A.store.open_time)&&m<t(A.store.close_time)}
